@@ -1,0 +1,14 @@
+name: lunar_date_time
+description: "Hỗ trợ trong việc chuyển đổi và tính toán ngày tháng, thời gian và can chi theo lịch Việt Nam."
+version: 0.0.1
+homepage: https://github.com/lamnhan066/lunar_date_time
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  equatable: ^2.0.5
+
+dev_dependencies:
+  test: ^1.25.2
+  lints: ^3.0.0
