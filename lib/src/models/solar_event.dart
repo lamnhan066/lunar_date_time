@@ -283,7 +283,7 @@ class SolarEvent extends Equatable implements BaseEvent {
 
   @override
   String toString() {
-    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat)';
+    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat)';
   }
 
   @override
