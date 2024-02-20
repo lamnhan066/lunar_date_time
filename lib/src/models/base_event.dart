@@ -9,6 +9,7 @@ class BaseEvent {
   final EventPriority priority;
   final BaseRepeat repeat;
   final EventMode mode;
+  final bool containTime;
 
   BaseEvent(
     this.date,
@@ -19,6 +20,7 @@ class BaseEvent {
     this.priority,
     this.repeat,
     this.mode,
+    this.containTime,
   );
 }
 

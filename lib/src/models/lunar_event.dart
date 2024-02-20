@@ -113,6 +113,8 @@ class LunarEvent extends Equatable implements BaseEvent {
   final LunarRepeat repeat;
   @override
   final EventMode mode;
+  @override
+  final bool containTime;
   LunarEvent({
     this.id,
     required this.date,
@@ -122,6 +124,7 @@ class LunarEvent extends Equatable implements BaseEvent {
     this.mode = EventMode.normal,
     this.priority = EventPriority.medium,
     LunarRepeat? repeat,
+    this.containTime = false,
   }) : repeat = repeat ?? LunarRepeat.no();
 
   LunarEvent copyWith({
@@ -133,6 +136,7 @@ class LunarEvent extends Equatable implements BaseEvent {
     int? id,
     EventPriority? priority,
     LunarRepeat? repeat,
+    bool? containTime,
   }) {
     return LunarEvent(
       date: date ?? this.date,
@@ -143,6 +147,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       id: id ?? this.id,
       priority: priority ?? this.priority,
       repeat: repeat ?? this.repeat,
+      containTime: containTime ?? this.containTime,
     );
   }
 
@@ -257,6 +262,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       'id': id,
       'priority': priority.name,
       'repeat': repeat.toJson(),
+      'containTime': containTime,
     };
   }
 
@@ -274,6 +280,7 @@ class LunarEvent extends Equatable implements BaseEvent {
           : EventPriority.medium,
       repeat:
           map['repeat'] != null ? LunarRepeat.fromJson(map['repeat']) : null,
+      containTime: map['containTime'],
     );
   }
 
@@ -284,7 +291,7 @@ class LunarEvent extends Equatable implements BaseEvent {
 
   @override
   String toString() {
-    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat)';
+    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime)';
   }
 
   @override
@@ -298,6 +305,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       id ?? '',
       priority,
       repeat.toJson(),
+      containTime,
     ];
   }
 }

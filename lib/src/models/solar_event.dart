@@ -112,6 +112,8 @@ class SolarEvent extends Equatable implements BaseEvent {
   final SolarRepeat repeat;
   @override
   final EventMode mode;
+  @override
+  final bool containTime;
   SolarEvent({
     this.id,
     required this.date,
@@ -121,6 +123,7 @@ class SolarEvent extends Equatable implements BaseEvent {
     this.mode = EventMode.normal,
     this.priority = EventPriority.medium,
     SolarRepeat? repeat,
+    this.containTime = false,
   }) : repeat = repeat ?? SolarRepeat.no();
 
   SolarEvent copyWith({
@@ -132,6 +135,7 @@ class SolarEvent extends Equatable implements BaseEvent {
     int? id,
     EventPriority? priority,
     SolarRepeat? repeat,
+    bool? containTime,
   }) {
     return SolarEvent(
       date: date ?? this.date,
@@ -142,6 +146,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       id: id ?? this.id,
       priority: priority ?? this.priority,
       repeat: repeat ?? this.repeat,
+      containTime: containTime ?? this.containTime,
     );
   }
 
@@ -256,6 +261,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       'id': id,
       'priority': priority.name,
       'repeat': repeat.toJson(),
+      'containTime': containTime,
     };
   }
 
@@ -273,6 +279,7 @@ class SolarEvent extends Equatable implements BaseEvent {
           : EventPriority.medium,
       repeat:
           map['repeat'] != null ? SolarRepeat.fromJson(map['repeat']) : null,
+      containTime: map['containTime'],
     );
   }
 
@@ -283,7 +290,7 @@ class SolarEvent extends Equatable implements BaseEvent {
 
   @override
   String toString() {
-    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat)';
+    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime)';
   }
 
   @override
@@ -297,6 +304,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       id ?? '',
       priority,
       repeat.toJson(),
+      containTime,
     ];
   }
 }
