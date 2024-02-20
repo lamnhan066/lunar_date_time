@@ -6,12 +6,14 @@ import 'package:lunar_date_time/src/models/base_event_list.dart';
 import 'solar_event.dart';
 
 class SolarEventList extends Equatable implements BaseEventList {
+  @override
   final Map<DateTime, List<SolarEvent>> events;
 
   SolarEventList({
     required this.events,
   });
 
+  @override
   void add(DateTime date, SolarEvent event) {
     final eventsOfDate = events[date];
     if (eventsOfDate == null) {
@@ -21,7 +23,8 @@ class SolarEventList extends Equatable implements BaseEventList {
     }
   }
 
-  void addAll(DateTime date, List<SolarEvent> events) {
+  @override
+  void addAll(covariant DateTime date, covariant List<SolarEvent> events) {
     final eventsOfDate = this.events[date];
     if (eventsOfDate == null) {
       this.events[date] = events;
@@ -30,24 +33,29 @@ class SolarEventList extends Equatable implements BaseEventList {
     }
   }
 
-  bool remove(DateTime date, SolarEvent event) {
+  @override
+  bool remove(covariant DateTime date, covariant SolarEvent event) {
     final eventsOfDate = events[date];
     return eventsOfDate != null ? eventsOfDate.remove(event) : false;
   }
 
+  @override
   List<SolarEvent> removeAll(DateTime date) {
     return events.remove(date) ?? [];
   }
 
+  @override
   void clear() {
     events.clear();
   }
 
+  @override
   List<SolarEvent> getEvents(DateTime date) {
     return events[date] ?? [];
   }
 
   /// Map<DateTime in microsecondsSinceEpoch, List of Event>
+  @override
   Map<String, dynamic> toMap() {
     final Map<String, List<String>> map = {};
     events.forEach((key, value) {
@@ -71,6 +79,7 @@ class SolarEventList extends Equatable implements BaseEventList {
     return events;
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory SolarEventList.fromJson(String source) =>

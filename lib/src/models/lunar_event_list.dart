@@ -4,12 +4,14 @@ import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
 class LunarEventList extends Equatable implements BaseEventList {
+  @override
   final Map<LunarDateTime, List<LunarEvent>> events;
 
   LunarEventList({
     required this.events,
   });
 
+  @override
   void add(LunarDateTime date, LunarEvent event) {
     final eventsOfDate = events[date];
     if (eventsOfDate == null) {
@@ -19,7 +21,8 @@ class LunarEventList extends Equatable implements BaseEventList {
     }
   }
 
-  void addAll(LunarDateTime date, List<LunarEvent> events) {
+  @override
+  void addAll(covariant LunarDateTime date, covariant List<LunarEvent> events) {
     final eventsOfDate = this.events[date];
     if (eventsOfDate == null) {
       this.events[date] = events;
@@ -28,24 +31,29 @@ class LunarEventList extends Equatable implements BaseEventList {
     }
   }
 
-  bool remove(LunarDateTime date, LunarEvent event) {
+  @override
+  bool remove(covariant LunarDateTime date, covariant LunarEvent event) {
     final eventsOfDate = events[date];
     return eventsOfDate != null ? eventsOfDate.remove(event) : false;
   }
 
-  List<LunarEvent> removeAll(LunarDateTime date) {
+  @override
+  List<LunarEvent> removeAll(covariant LunarDateTime date) {
     return events.remove(date) ?? [];
   }
 
+  @override
   void clear() {
     events.clear();
   }
 
-  List<LunarEvent> getEvents(LunarDateTime date) {
+  @override
+  List<LunarEvent> getEvents(covariant LunarDateTime date) {
     return events[date] ?? [];
   }
 
   /// Map<DateTime in microsecondsSinceEpoch, List of LunarEvent>
+  @override
   Map<String, dynamic> toMap() {
     final Map<String, List<String>> map = {};
     events.forEach((key, value) {
@@ -69,6 +77,7 @@ class LunarEventList extends Equatable implements BaseEventList {
     return events;
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory LunarEventList.fromJson(String source) =>
