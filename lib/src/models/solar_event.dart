@@ -5,7 +5,7 @@ import 'package:lunar_date_time/src/models/base_event.dart';
 
 import 'enums.dart';
 
-class SolarRepeat implements BaseRepeat {
+class SolarRepeat extends Equatable implements BaseRepeat {
   @override
   final DateTime fromDate;
   @override
@@ -93,6 +93,14 @@ class SolarRepeat implements BaseRepeat {
 
   factory SolarRepeat.fromJson(String source) =>
       SolarRepeat.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'SolarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
+  }
+
+  @override
+  List<Object> get props => [fromDate, toDate, frequency, every];
 }
 
 class SolarEvent extends Equatable implements BaseEvent {
@@ -125,6 +133,25 @@ class SolarEvent extends Equatable implements BaseEvent {
     SolarRepeat? repeat,
     this.containTime = false,
   }) : repeat = repeat ?? SolarRepeat.no();
+
+  factory SolarEvent.fromBaseEvent(BaseEvent event) {
+    return SolarEvent(
+      id: event.id,
+      date: event.date,
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      mode: event.mode,
+      priority: event.priority,
+      repeat: SolarRepeat(
+        fromDate: event.repeat.fromDate,
+        toDate: event.repeat.toDate,
+        frequency: event.repeat.frequency,
+        every: event.repeat.every,
+      ),
+      containTime: event.containTime,
+    );
+  }
 
   SolarEvent copyWith({
     DateTime? date,
@@ -303,7 +330,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       location ?? '',
       id ?? '',
       priority,
-      repeat.toJson(),
+      repeat,
       containTime,
     ];
   }

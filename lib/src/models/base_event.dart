@@ -11,17 +11,17 @@ class BaseEvent {
   final EventMode mode;
   final bool containTime;
 
-  BaseEvent(
-    this.date,
-    this.title,
-    this.description,
-    this.location,
-    this.id,
-    this.priority,
-    this.repeat,
-    this.mode,
-    this.containTime,
-  );
+  BaseEvent({
+    required this.date,
+    required this.title,
+    required this.description,
+    required this.location,
+    required this.id,
+    required this.priority,
+    required this.repeat,
+    required this.mode,
+    required this.containTime,
+  });
 }
 
 class BaseRepeat {

@@ -1,12 +1,9 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-import 'package:lunar_date_time/src/lunar_date_time.dart';
-import 'package:lunar_date_time/src/models/base_event.dart';
+import 'package:lunar_date_time/lunar_date_time.dart';
 
-import 'enums.dart';
-
-class LunarRepeat implements BaseRepeat {
+class LunarRepeat extends Equatable implements BaseRepeat {
   @override
   final LunarDateTime fromDate;
   @override
@@ -94,6 +91,14 @@ class LunarRepeat implements BaseRepeat {
 
   factory LunarRepeat.fromJson(String source) =>
       LunarRepeat.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'LunarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
+  }
+
+  @override
+  List<Object> get props => [fromDate, toDate, frequency, every];
 }
 
 class LunarEvent extends Equatable implements BaseEvent {
@@ -127,6 +132,27 @@ class LunarEvent extends Equatable implements BaseEvent {
     this.containTime = false,
   }) : repeat = repeat ?? LunarRepeat.no();
 
+  factory LunarEvent.fromBaseEvent(BaseEvent event) {
+    return LunarEvent(
+      id: event.id,
+      date: (event.date is LunarDateTime)
+          ? event.date as LunarDateTime
+          : event.date.toLunar,
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      mode: event.mode,
+      priority: event.priority,
+      repeat: LunarRepeat(
+        fromDate: event.repeat.fromDate as LunarDateTime,
+        toDate: event.repeat.toDate as LunarDateTime,
+        frequency: event.repeat.frequency,
+        every: event.repeat.every,
+      ),
+      containTime: event.containTime,
+    );
+  }
+
   LunarEvent copyWith({
     LunarDateTime? date,
     String? title,
@@ -154,16 +180,16 @@ class LunarEvent extends Equatable implements BaseEvent {
   /// Kiểm tra xem event này có phù hợp với `date` không.
   bool checkDate(LunarDateTime date) {
     return switch (repeat.frequency) {
-      RepeatFrequency.no => _checkNo(date),
-      RepeatFrequency.hourly => _checkHourly(date),
-      RepeatFrequency.daily => _checkDaily(date),
-      RepeatFrequency.weekly => _checkWeekly(date),
-      RepeatFrequency.monthly => _checkMonthly(date),
-      RepeatFrequency.yearly => _checkYearly(date),
+      RepeatFrequency.no => checkNo(date),
+      RepeatFrequency.hourly => checkHourly(date),
+      RepeatFrequency.daily => checkDaily(date),
+      RepeatFrequency.weekly => checkWeekly(date),
+      RepeatFrequency.monthly => checkMonthly(date),
+      RepeatFrequency.yearly => checkYearly(date),
     };
   }
 
-  bool _checkNo(LunarDateTime date) {
+  bool checkNo(LunarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
         this.date.year == date.year) {
@@ -172,8 +198,8 @@ class LunarEvent extends Equatable implements BaseEvent {
     return false;
   }
 
-  bool _checkHourly(LunarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
+  bool checkHourly(LunarDateTime date) {
+    if (!isValidDateInRange(date)) return false;
 
     final everyInMilliseconds =
         date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
@@ -185,8 +211,8 @@ class LunarEvent extends Equatable implements BaseEvent {
     return false;
   }
 
-  bool _checkDaily(LunarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
+  bool checkDaily(LunarDateTime date) {
+    if (!isValidDateInRange(date)) return false;
 
     final everyInMilliseconds =
         date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
@@ -198,8 +224,8 @@ class LunarEvent extends Equatable implements BaseEvent {
     return false;
   }
 
-  bool _checkWeekly(LunarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
+  bool checkWeekly(LunarDateTime date) {
+    if (!isValidDateInRange(date)) return false;
 
     if (this.date.weekday == date.weekday) {
       final everyInMilliseconds =
@@ -212,8 +238,8 @@ class LunarEvent extends Equatable implements BaseEvent {
     return false;
   }
 
-  bool _checkMonthly(LunarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
+  bool checkMonthly(LunarDateTime date) {
+    if (!isValidDateInRange(date)) return false;
 
     if (this.date.day == date.day) {
       final every = date.month - this.date.month;
@@ -224,8 +250,8 @@ class LunarEvent extends Equatable implements BaseEvent {
     return false;
   }
 
-  bool _checkYearly(LunarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
+  bool checkYearly(LunarDateTime date) {
+    if (!isValidDateInRange(date)) return false;
 
     if (this.date.day == date.day && this.date.month == date.month) {
       final every = date.year - this.date.year;
@@ -238,7 +264,7 @@ class LunarEvent extends Equatable implements BaseEvent {
 
   /// Currently do not use `repeat.fromDate` to compare because we assume that the
   /// from date is the date that the user first set.
-  bool _isValidDateInRange(LunarDateTime date) {
+  bool isValidDateInRange(LunarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
         this.date.year == date.year) {
@@ -304,7 +330,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       location ?? '',
       id ?? '',
       priority,
-      repeat.toJson(),
+      repeat,
       containTime,
     ];
   }
