@@ -120,6 +120,9 @@ class LunarEvent extends Equatable implements BaseEvent {
   final EventMode mode;
   @override
   final bool containTime;
+  @override
+  final bool isEndOfMonth;
+
   LunarEvent({
     this.id,
     required this.date,
@@ -130,6 +133,7 @@ class LunarEvent extends Equatable implements BaseEvent {
     this.priority = EventPriority.medium,
     LunarRepeat? repeat,
     this.containTime = false,
+    this.isEndOfMonth = false,
   }) : repeat = repeat ?? LunarRepeat.no();
 
   factory LunarEvent.fromBaseEvent(BaseEvent event) {
@@ -144,12 +148,17 @@ class LunarEvent extends Equatable implements BaseEvent {
       mode: event.mode,
       priority: event.priority,
       repeat: LunarRepeat(
-        fromDate: event.repeat.fromDate as LunarDateTime,
-        toDate: event.repeat.toDate as LunarDateTime,
+        fromDate: event.repeat.fromDate is LunarDateTime
+            ? event.repeat.fromDate as LunarDateTime
+            : event.repeat.fromDate.toLunar,
+        toDate: event.repeat.toDate is LunarDateTime
+            ? event.repeat.toDate as LunarDateTime
+            : event.repeat.toDate.toLunar,
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
       containTime: event.containTime,
+      isEndOfMonth: event.isEndOfMonth,
     );
   }
 
@@ -163,6 +172,7 @@ class LunarEvent extends Equatable implements BaseEvent {
     EventPriority? priority,
     LunarRepeat? repeat,
     bool? containTime,
+    bool? isEndOfMonth,
   }) {
     return LunarEvent(
       date: date ?? this.date,
@@ -174,6 +184,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       priority: priority ?? this.priority,
       repeat: repeat ?? this.repeat,
       containTime: containTime ?? this.containTime,
+      isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
     );
   }
 
@@ -241,7 +252,15 @@ class LunarEvent extends Equatable implements BaseEvent {
   bool checkMonthly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
-    if (this.date.day == date.day) {
+    if (isEndOfMonth) {
+      final tomorrow = date.add(Duration(days: 1));
+      if (tomorrow.day == 1) {
+        final every = date.month - this.date.month;
+        if (every % repeat.every == 0) {
+          return true;
+        }
+      }
+    } else if (this.date.day == date.day) {
       final every = date.month - this.date.month;
       if (every % repeat.every == 0) {
         return true;
@@ -253,10 +272,20 @@ class LunarEvent extends Equatable implements BaseEvent {
   bool checkYearly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
-    if (this.date.day == date.day && this.date.month == date.month) {
-      final every = date.year - this.date.year;
-      if (every % repeat.every == 0) {
-        return true;
+    if (this.date.month == date.month) {
+      if (isEndOfMonth) {
+        final tomorrow = date.add(Duration(days: 1));
+        if (tomorrow.day == 1) {
+          final every = date.year - this.date.year;
+          if (every % repeat.every == 0) {
+            return true;
+          }
+        }
+      } else if (this.date.day == date.day) {
+        final every = date.year - this.date.year;
+        if (every % repeat.every == 0) {
+          return true;
+        }
       }
     }
     return false;
@@ -289,6 +318,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       'priority': priority.name,
       'repeat': repeat.toJson(),
       'containTime': containTime,
+      'isEndOfMonth': isEndOfMonth,
     };
   }
 
@@ -307,6 +337,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       repeat:
           map['repeat'] != null ? LunarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
+      isEndOfMonth: map['isEndOfMonth'],
     );
   }
 
@@ -317,7 +348,7 @@ class LunarEvent extends Equatable implements BaseEvent {
 
   @override
   String toString() {
-    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime)';
+    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
   }
 
   @override
@@ -332,6 +363,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       priority,
       repeat,
       containTime,
+      isEndOfMonth,
     ];
   }
 }

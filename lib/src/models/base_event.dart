@@ -10,6 +10,7 @@ class BaseEvent {
   final BaseRepeat repeat;
   final EventMode mode;
   final bool containTime;
+  final bool isEndOfMonth;
 
   BaseEvent({
     required this.date,
@@ -21,6 +22,7 @@ class BaseEvent {
     required this.repeat,
     required this.mode,
     required this.containTime,
+    required this.isEndOfMonth,
   });
 }
 

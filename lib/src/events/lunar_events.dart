@@ -299,13 +299,6 @@ final getLunarEventsAsList = <LunarEvent>[
         'Buổi lễ quây quần của gia đình vào ngày cuối cùng của năm âm lịch, để nhìn lại một năm đã qua và chuẩn bị đón năm mới.',
     repeat: LunarRepeat.yearly(),
     mode: EventMode.readonly,
-  ),
-  LunarEvent(
-    date: LunarDateTime(0, 12, 30),
-    title: 'Lễ Tất Niên',
-    description:
-        'Tiếp tục của lễ Tất Niên, dành cho những gia đình thực hiện vào ngày cuối cùng của năm âm lịch, một dịp để sum họp và chia sẻ.',
-    repeat: LunarRepeat.yearly(),
-    mode: EventMode.readonly,
+    isEndOfMonth: true,
   ),
 ];

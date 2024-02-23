@@ -122,6 +122,9 @@ class SolarEvent extends Equatable implements BaseEvent {
   final EventMode mode;
   @override
   final bool containTime;
+  @override
+  final bool isEndOfMonth;
+
   SolarEvent({
     this.id,
     required this.date,
@@ -132,6 +135,7 @@ class SolarEvent extends Equatable implements BaseEvent {
     this.priority = EventPriority.medium,
     SolarRepeat? repeat,
     this.containTime = false,
+    this.isEndOfMonth = false,
   }) : repeat = repeat ?? SolarRepeat.no();
 
   factory SolarEvent.fromBaseEvent(BaseEvent event) {
@@ -150,6 +154,7 @@ class SolarEvent extends Equatable implements BaseEvent {
         every: event.repeat.every,
       ),
       containTime: event.containTime,
+      isEndOfMonth: event.isEndOfMonth,
     );
   }
 
@@ -163,6 +168,7 @@ class SolarEvent extends Equatable implements BaseEvent {
     EventPriority? priority,
     SolarRepeat? repeat,
     bool? containTime,
+    bool? isEndOfMonth,
   }) {
     return SolarEvent(
       date: date ?? this.date,
@@ -174,6 +180,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       priority: priority ?? this.priority,
       repeat: repeat ?? this.repeat,
       containTime: containTime ?? this.containTime,
+      isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
     );
   }
 
@@ -241,7 +248,15 @@ class SolarEvent extends Equatable implements BaseEvent {
   bool _checkMonthly(DateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
-    if (this.date.day == date.day) {
+    if (isEndOfMonth) {
+      final tomorrow = date.add(Duration(days: 1));
+      if (tomorrow.day == 1) {
+        final every = date.month - this.date.month;
+        if (every % repeat.every == 0) {
+          return true;
+        }
+      }
+    } else if (this.date.day == date.day) {
       final every = date.month - this.date.month;
       if (every % repeat.every == 0) {
         return true;
@@ -253,10 +268,20 @@ class SolarEvent extends Equatable implements BaseEvent {
   bool _checkYearly(DateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
-    if (this.date.day == date.day && this.date.month == date.month) {
-      final every = date.year - this.date.year;
-      if (every % repeat.every == 0) {
-        return true;
+    if (this.date.month == date.month) {
+      if (isEndOfMonth) {
+        final tomorrow = date.add(Duration(days: 1));
+        if (tomorrow.day == 1) {
+          final every = date.year - this.date.year;
+          if (every % repeat.every == 0) {
+            return true;
+          }
+        }
+      } else if (this.date.day == date.day) {
+        final every = date.year - this.date.year;
+        if (every % repeat.every == 0) {
+          return true;
+        }
       }
     }
     return false;
@@ -289,6 +314,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       'priority': priority.name,
       'repeat': repeat.toJson(),
       'containTime': containTime,
+      'isEndOfMonth': isEndOfMonth,
     };
   }
 
@@ -307,6 +333,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       repeat:
           map['repeat'] != null ? SolarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
+      isEndOfMonth: map['isEndOfMonth'],
     );
   }
 
@@ -317,7 +344,7 @@ class SolarEvent extends Equatable implements BaseEvent {
 
   @override
   String toString() {
-    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime)';
+    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
   }
 
   @override
@@ -332,6 +359,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       priority,
       repeat,
       containTime,
+      isEndOfMonth,
     ];
   }
 }
