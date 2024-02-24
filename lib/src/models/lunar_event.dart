@@ -90,7 +90,11 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     LunarRepeat? repeat,
     super.containTime = false,
     super.isEndOfMonth = false,
-  }) : super(repeat: repeat ?? LunarRepeat.no());
+    DateTime? createdDate,
+  }) : super(
+          repeat: repeat ?? LunarRepeat.no(),
+          createdDate: createdDate ?? DateTime.now(),
+        );
 
   factory LunarEvent.fromBaseEvent(BaseEvent event) {
     return LunarEvent(
@@ -115,6 +119,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
       ),
       containTime: event.containTime,
       isEndOfMonth: event.isEndOfMonth,
+      createdDate: event.createdDate,
     );
   }
 
@@ -130,6 +135,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     BaseRepeat<DateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
+    DateTime? createdDate,
   }) {
     return LunarEvent(
       date: date ?? this.date,
@@ -142,6 +148,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
       mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
+      createdDate: createdDate,
     );
   }
 
@@ -265,7 +272,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   }
 
   factory LunarEvent.fromMap(Map<String, dynamic> map) {
-    final date = LunarDateTime.parse(map['date']);
+    final date = LunarDateTime.fromMillisecondsSinceEpoch(map['date']);
     return LunarEvent(
       date: date,
       title: map['title'],
@@ -280,6 +287,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
           map['repeat'] != null ? LunarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
+      createdDate: DateTime.fromMillisecondsSinceEpoch(map['createdDate']),
     );
   }
 
@@ -288,6 +296,6 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
 
   @override
   String toString() {
-    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
+    return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
   }
 }

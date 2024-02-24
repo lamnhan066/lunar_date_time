@@ -15,6 +15,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
   final EventMode mode;
   final bool containTime;
   final bool isEndOfMonth;
+  final DateTime createdDate;
 
   BaseEvent({
     required this.date,
@@ -27,6 +28,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
     required this.mode,
     required this.containTime,
     required this.isEndOfMonth,
+    required this.createdDate,
   });
 
   BaseEvent<D> copyWith({
@@ -40,6 +42,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
     BaseRepeat<D>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
+    DateTime? createdDate,
   }) {
     return BaseEvent<D>(
       date: date ?? this.date,
@@ -52,12 +55,13 @@ class BaseEvent<D extends DateTime> extends Equatable {
       mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
+      createdDate: createdDate ?? this.createdDate,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'date': date.toIso8601String(),
+      'date': date.millisecondsSinceEpoch,
       'title': title,
       'description': description,
       'mode': mode.name,
@@ -67,6 +71,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
       'repeat': repeat.toJson(),
       'containTime': containTime,
       'isEndOfMonth': isEndOfMonth,
+      'createdDate': createdDate.millisecondsSinceEpoch,
     };
   }
 
@@ -85,6 +90,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
       mode,
       containTime,
       isEndOfMonth,
+      createdDate,
     ];
   }
 }

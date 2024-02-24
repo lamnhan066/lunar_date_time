@@ -95,7 +95,11 @@ class SolarEvent extends BaseEvent<DateTime> {
     SolarRepeat? repeat,
     super.containTime = false,
     super.isEndOfMonth = false,
-  }) : super(repeat: repeat ?? SolarRepeat.no());
+    DateTime? createdDate,
+  }) : super(
+          repeat: repeat ?? SolarRepeat.no(),
+          createdDate: createdDate ?? DateTime.now(),
+        );
 
   factory SolarEvent.fromBaseEvent(BaseEvent event) {
     return SolarEvent(
@@ -114,6 +118,7 @@ class SolarEvent extends BaseEvent<DateTime> {
       ),
       containTime: event.containTime,
       isEndOfMonth: event.isEndOfMonth,
+      createdDate: event.createdDate,
     );
   }
 
@@ -129,6 +134,7 @@ class SolarEvent extends BaseEvent<DateTime> {
     BaseRepeat<DateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
+    DateTime? createdDate,
   }) {
     return SolarEvent(
       date: date ?? this.date,
@@ -141,6 +147,7 @@ class SolarEvent extends BaseEvent<DateTime> {
       mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
+      createdDate: createdDate,
     );
   }
 
@@ -264,7 +271,7 @@ class SolarEvent extends BaseEvent<DateTime> {
   }
 
   factory SolarEvent.fromMap(Map<String, dynamic> map) {
-    final date = DateTime.parse(map['date']);
+    final date = DateTime.fromMillisecondsSinceEpoch(map['date']);
     return SolarEvent(
       date: date,
       title: map['title'],
@@ -279,6 +286,7 @@ class SolarEvent extends BaseEvent<DateTime> {
           map['repeat'] != null ? SolarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
+      createdDate: DateTime.fromMillisecondsSinceEpoch(map['createdDate']),
     );
   }
 
@@ -287,6 +295,6 @@ class SolarEvent extends BaseEvent<DateTime> {
 
   @override
   String toString() {
-    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
+    return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
   }
 }
