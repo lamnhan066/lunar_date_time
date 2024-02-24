@@ -1,25 +1,16 @@
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
-class LunarRepeat extends Equatable implements BaseRepeat {
-  @override
-  final LunarDateTime fromDate;
-  @override
-  final LunarDateTime toDate;
-  @override
-  final RepeatFrequency frequency;
-  @override
-  final int every;
-
+class LunarRepeat extends BaseRepeat<LunarDateTime> {
   const LunarRepeat({
-    required this.fromDate,
-    required this.toDate,
-    required this.frequency,
-    required this.every,
+    required super.fromDate,
+    required super.toDate,
+    required super.frequency,
+    required super.every,
   });
 
+  @override
   LunarRepeat copyWith({
     LunarDateTime? fromDate,
     LunarDateTime? toDate,
@@ -67,15 +58,6 @@ class LunarRepeat extends Equatable implements BaseRepeat {
     return LunarRepeat.every(RepeatFrequency.hourly);
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'fromDate': fromDate.millisecondsSinceEpoch,
-      'toDate': toDate.millisecondsSinceEpoch,
-      'frequency': frequency.name,
-      'every': every,
-    };
-  }
-
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = LunarDateTime.fromMillisecondsSinceEpoch(map['fromDate']);
     final toDate = LunarDateTime.fromMillisecondsSinceEpoch(map['toDate']);
@@ -87,8 +69,6 @@ class LunarRepeat extends Equatable implements BaseRepeat {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory LunarRepeat.fromJson(String source) =>
       LunarRepeat.fromMap(json.decode(source));
 
@@ -96,45 +76,21 @@ class LunarRepeat extends Equatable implements BaseRepeat {
   String toString() {
     return 'LunarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
   }
-
-  @override
-  List<Object> get props => [fromDate, toDate, frequency, every];
 }
 
-class LunarEvent extends Equatable implements BaseEvent {
-  @override
-  final LunarDateTime date;
-  @override
-  final String title;
-  @override
-  final String? description;
-  @override
-  final String? location;
-  @override
-  final int? id;
-  @override
-  final EventPriority priority;
-  @override
-  final LunarRepeat repeat;
-  @override
-  final EventMode mode;
-  @override
-  final bool containTime;
-  @override
-  final bool isEndOfMonth;
-
+class LunarEvent extends BaseEvent<LunarDateTime> {
   LunarEvent({
-    this.id,
-    required this.date,
-    required this.title,
-    this.description,
-    this.location,
-    this.mode = EventMode.normal,
-    this.priority = EventPriority.medium,
+    super.id,
+    required super.date,
+    required super.title,
+    super.description,
+    super.location,
+    super.mode = EventMode.normal,
+    super.priority = EventPriority.medium,
     LunarRepeat? repeat,
-    this.containTime = false,
-    this.isEndOfMonth = false,
-  }) : repeat = repeat ?? LunarRepeat.no();
+    super.containTime = false,
+    super.isEndOfMonth = false,
+  }) : super(repeat: repeat ?? LunarRepeat.no());
 
   factory LunarEvent.fromBaseEvent(BaseEvent event) {
     return LunarEvent(
@@ -162,15 +118,16 @@ class LunarEvent extends Equatable implements BaseEvent {
     );
   }
 
+  @override
   LunarEvent copyWith({
     LunarDateTime? date,
     String? title,
     String? description,
     EventMode? mode,
     String? location,
-    int? id,
+    String? id,
     EventPriority? priority,
-    LunarRepeat? repeat,
+    BaseRepeat<DateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
   }) {
@@ -178,11 +135,11 @@ class LunarEvent extends Equatable implements BaseEvent {
       date: date ?? this.date,
       title: title ?? this.title,
       description: description ?? this.description,
-      mode: mode ?? this.mode,
       location: location ?? this.location,
       id: id ?? this.id,
       priority: priority ?? this.priority,
-      repeat: repeat ?? this.repeat,
+      repeat: (repeat ?? this.repeat) as LunarRepeat,
+      mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
     );
@@ -307,21 +264,6 @@ class LunarEvent extends Equatable implements BaseEvent {
     return date.isAfter(this.date) && date.isBefore(repeat.toDate);
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'date': date.toIso8601String(),
-      'title': title,
-      'description': description,
-      'mode': mode.name,
-      'location': location,
-      'id': id,
-      'priority': priority.name,
-      'repeat': repeat.toJson(),
-      'containTime': containTime,
-      'isEndOfMonth': isEndOfMonth,
-    };
-  }
-
   factory LunarEvent.fromMap(Map<String, dynamic> map) {
     final date = LunarDateTime.parse(map['date']);
     return LunarEvent(
@@ -330,7 +272,7 @@ class LunarEvent extends Equatable implements BaseEvent {
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),
       location: map['location'],
-      id: map['id']?.toInt(),
+      id: map['id'],
       priority: map['priority'] != null
           ? EventPriority.values.byName(map['priority'])
           : EventPriority.medium,
@@ -341,29 +283,11 @@ class LunarEvent extends Equatable implements BaseEvent {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory LunarEvent.fromJson(String source) =>
       LunarEvent.fromMap(json.decode(source));
 
   @override
   String toString() {
     return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
-  }
-
-  @override
-  List<Object> get props {
-    return [
-      date,
-      title,
-      description ?? '',
-      mode,
-      location ?? '',
-      id ?? '',
-      priority,
-      repeat,
-      containTime,
-      isEndOfMonth,
-    ];
   }
 }

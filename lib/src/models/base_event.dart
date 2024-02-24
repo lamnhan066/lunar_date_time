@@ -1,13 +1,17 @@
+import 'dart:convert';
+
+import 'package:equatable/equatable.dart';
+
 import 'enums.dart';
 
-class BaseEvent {
-  final DateTime date;
+class BaseEvent<D extends DateTime> extends Equatable {
+  final D date;
   final String title;
   final String? description;
   final String? location;
-  final int? id;
+  final String? id;
   final EventPriority priority;
-  final BaseRepeat repeat;
+  final BaseRepeat<D> repeat;
   final EventMode mode;
   final bool containTime;
   final bool isEndOfMonth;
@@ -24,11 +28,70 @@ class BaseEvent {
     required this.containTime,
     required this.isEndOfMonth,
   });
+
+  BaseEvent<D> copyWith({
+    D? date,
+    String? title,
+    String? description,
+    EventMode? mode,
+    String? location,
+    String? id,
+    EventPriority? priority,
+    BaseRepeat<D>? repeat,
+    bool? containTime,
+    bool? isEndOfMonth,
+  }) {
+    return BaseEvent<D>(
+      date: date ?? this.date,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      id: id ?? this.id,
+      priority: priority ?? this.priority,
+      repeat: repeat ?? this.repeat,
+      mode: mode ?? this.mode,
+      containTime: containTime ?? this.containTime,
+      isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date.toIso8601String(),
+      'title': title,
+      'description': description,
+      'mode': mode.name,
+      'location': location,
+      'id': id,
+      'priority': priority.name,
+      'repeat': repeat.toJson(),
+      'containTime': containTime,
+      'isEndOfMonth': isEndOfMonth,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  @override
+  List<Object?> get props {
+    return [
+      date,
+      title,
+      description,
+      location,
+      id,
+      priority,
+      repeat,
+      mode,
+      containTime,
+      isEndOfMonth,
+    ];
+  }
 }
 
-class BaseRepeat {
-  final DateTime fromDate;
-  final DateTime toDate;
+class BaseRepeat<D extends DateTime> extends Equatable {
+  final D fromDate;
+  final D toDate;
   final RepeatFrequency frequency;
   final int every;
 
@@ -38,4 +101,32 @@ class BaseRepeat {
     required this.frequency,
     required this.every,
   });
+
+  BaseRepeat<D> copyWith({
+    D? fromDate,
+    D? toDate,
+    RepeatFrequency? frequency,
+    int? every,
+  }) {
+    return BaseRepeat<D>(
+      fromDate: fromDate ?? this.fromDate,
+      toDate: toDate ?? this.toDate,
+      frequency: frequency ?? this.frequency,
+      every: every ?? this.every,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'fromDate': fromDate.millisecondsSinceEpoch,
+      'toDate': toDate.millisecondsSinceEpoch,
+      'frequency': frequency.name,
+      'every': every,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  @override
+  List<Object> get props => [fromDate, toDate, frequency, every];
 }

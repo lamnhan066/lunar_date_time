@@ -1,27 +1,18 @@
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/src/models/base_event.dart';
 
 import 'enums.dart';
 
-class SolarRepeat extends Equatable implements BaseRepeat {
-  @override
-  final DateTime fromDate;
-  @override
-  final DateTime toDate;
-  @override
-  final RepeatFrequency frequency;
-  @override
-  final int every;
-
+class SolarRepeat extends BaseRepeat<DateTime> {
   const SolarRepeat({
-    required this.fromDate,
-    required this.toDate,
-    required this.frequency,
-    required this.every,
+    required super.fromDate,
+    required super.toDate,
+    required super.frequency,
+    required super.every,
   });
 
+  @override
   SolarRepeat copyWith({
     DateTime? fromDate,
     DateTime? toDate,
@@ -69,15 +60,6 @@ class SolarRepeat extends Equatable implements BaseRepeat {
     return SolarRepeat.every(RepeatFrequency.hourly);
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'fromDate': fromDate.millisecondsSinceEpoch,
-      'toDate': toDate.millisecondsSinceEpoch,
-      'frequency': frequency.name,
-      'every': every,
-    };
-  }
-
   factory SolarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = DateTime.fromMillisecondsSinceEpoch(map['fromDate']);
     final toDate = DateTime.fromMillisecondsSinceEpoch(map['toDate']);
@@ -88,8 +70,6 @@ class SolarRepeat extends Equatable implements BaseRepeat {
       every: map['every']?.toInt() ?? 0,
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory SolarRepeat.fromJson(String source) =>
       SolarRepeat.fromMap(json.decode(source));
@@ -103,40 +83,19 @@ class SolarRepeat extends Equatable implements BaseRepeat {
   List<Object> get props => [fromDate, toDate, frequency, every];
 }
 
-class SolarEvent extends Equatable implements BaseEvent {
-  @override
-  final DateTime date;
-  @override
-  final String title;
-  @override
-  final String? description;
-  @override
-  final String? location;
-  @override
-  final int? id;
-  @override
-  final EventPriority priority;
-  @override
-  final SolarRepeat repeat;
-  @override
-  final EventMode mode;
-  @override
-  final bool containTime;
-  @override
-  final bool isEndOfMonth;
-
+class SolarEvent extends BaseEvent<DateTime> {
   SolarEvent({
-    this.id,
-    required this.date,
-    required this.title,
-    this.description,
-    this.location,
-    this.mode = EventMode.normal,
-    this.priority = EventPriority.medium,
+    super.id,
+    required super.date,
+    required super.title,
+    super.description,
+    super.location,
+    super.mode = EventMode.normal,
+    super.priority = EventPriority.medium,
     SolarRepeat? repeat,
-    this.containTime = false,
-    this.isEndOfMonth = false,
-  }) : repeat = repeat ?? SolarRepeat.no();
+    super.containTime = false,
+    super.isEndOfMonth = false,
+  }) : super(repeat: repeat ?? SolarRepeat.no());
 
   factory SolarEvent.fromBaseEvent(BaseEvent event) {
     return SolarEvent(
@@ -158,15 +117,16 @@ class SolarEvent extends Equatable implements BaseEvent {
     );
   }
 
+  @override
   SolarEvent copyWith({
     DateTime? date,
     String? title,
     String? description,
     EventMode? mode,
     String? location,
-    int? id,
+    String? id,
     EventPriority? priority,
-    SolarRepeat? repeat,
+    BaseRepeat<DateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
   }) {
@@ -174,11 +134,11 @@ class SolarEvent extends Equatable implements BaseEvent {
       date: date ?? this.date,
       title: title ?? this.title,
       description: description ?? this.description,
-      mode: mode ?? this.mode,
       location: location ?? this.location,
       id: id ?? this.id,
       priority: priority ?? this.priority,
-      repeat: repeat ?? this.repeat,
+      repeat: (repeat ?? this.repeat) as SolarRepeat,
+      mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
     );
@@ -303,21 +263,6 @@ class SolarEvent extends Equatable implements BaseEvent {
     return date.isAfter(this.date) && date.isBefore(repeat.toDate);
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'date': date.toIso8601String(),
-      'title': title,
-      'description': description,
-      'mode': mode.name,
-      'location': location,
-      'id': id,
-      'priority': priority.name,
-      'repeat': repeat.toJson(),
-      'containTime': containTime,
-      'isEndOfMonth': isEndOfMonth,
-    };
-  }
-
   factory SolarEvent.fromMap(Map<String, dynamic> map) {
     final date = DateTime.parse(map['date']);
     return SolarEvent(
@@ -326,7 +271,7 @@ class SolarEvent extends Equatable implements BaseEvent {
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),
       location: map['location'],
-      id: map['id']?.toInt(),
+      id: map['id'],
       priority: map['priority'] != null
           ? EventPriority.values.byName(map['priority'])
           : EventPriority.medium,
@@ -337,29 +282,11 @@ class SolarEvent extends Equatable implements BaseEvent {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory SolarEvent.fromJson(String source) =>
       SolarEvent.fromMap(json.decode(source));
 
   @override
   String toString() {
     return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth)';
-  }
-
-  @override
-  List<Object> get props {
-    return [
-      date,
-      title,
-      description ?? '',
-      mode,
-      location ?? '',
-      id ?? '',
-      priority,
-      repeat,
-      containTime,
-      isEndOfMonth,
-    ];
   }
 }
