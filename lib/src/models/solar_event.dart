@@ -147,7 +147,7 @@ class SolarEvent extends BaseEvent<DateTime> {
       mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
-      createdDate: createdDate,
+      createdDate: createdDate ?? this.createdDate,
     );
   }
 
@@ -271,9 +271,8 @@ class SolarEvent extends BaseEvent<DateTime> {
   }
 
   factory SolarEvent.fromMap(Map<String, dynamic> map) {
-    final date = DateTime.fromMillisecondsSinceEpoch(map['date']);
     return SolarEvent(
-      date: date,
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
       title: map['title'],
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),

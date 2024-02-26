@@ -148,7 +148,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
       mode: mode ?? this.mode,
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
-      createdDate: createdDate,
+      createdDate: createdDate ?? this.createdDate,
     );
   }
 
@@ -272,9 +272,8 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   }
 
   factory LunarEvent.fromMap(Map<String, dynamic> map) {
-    final date = LunarDateTime.fromMillisecondsSinceEpoch(map['date']);
     return LunarEvent(
-      date: date,
+      date: LunarDateTime.fromMillisecondsSinceEpoch(map['date']),
       title: map['title'],
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),
