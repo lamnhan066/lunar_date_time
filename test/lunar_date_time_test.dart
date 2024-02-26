@@ -29,6 +29,20 @@ void main() {
     expect(now.compareTo(past4Days), greaterThan(0));
   });
 
+  test('compare events', () {
+    expect(
+      LunarEvent(
+          date: LunarDateTime(0), title: 'Event', createdDate: DateTime(0)),
+      equals(LunarEvent(
+          date: LunarDateTime(0), title: 'Event', createdDate: DateTime(0))),
+    );
+    expect(
+      SolarEvent(date: DateTime(0), title: 'Event', createdDate: DateTime(0)),
+      equals(SolarEvent(
+          date: DateTime(0), title: 'Event', createdDate: DateTime(0))),
+    );
+  });
+
   group('Events', () {
     test('LunarEvent', () {
       final event = LunarEvent(date: LunarDateTime.now(), title: 'test title');

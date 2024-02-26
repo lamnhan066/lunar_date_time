@@ -152,6 +152,31 @@ class LunarDateTime extends DateTime {
       DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch, isUtc: isUtc)
           .toLunar;
 
+  LunarDateTime copyWith({
+    int? year,
+    int? month,
+    int? day,
+    int? hour,
+    int? minute,
+    int? second,
+    int? millisecond,
+    int? microsecond,
+    bool? leapMonth,
+  }) {
+    return ((leapMonth ?? isLeapMonth)
+        ? LunarDateTime.leapMonth
+        : LunarDateTime.new)(
+      year ?? this.year,
+      month ?? this.month,
+      day ?? this.day,
+      hour ?? this.hour,
+      minute ?? this.minute,
+      second ?? this.second,
+      millisecond ?? this.millisecond,
+      microsecond ?? this.microsecond,
+    );
+  }
+
   /// Chuyển đổi từ [LunarDateTime] sang [DateTime] với tham số [timeZoneOffset]
   /// là độ chênh lệch giữa Local và UTC, mặc định sẽ sử dụng giá trị từ
   /// [DateTime.now].
