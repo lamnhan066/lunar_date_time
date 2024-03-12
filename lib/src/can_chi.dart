@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:lunar_date_time/src/utils.dart';
+
 import 'base.dart';
 import 'models/can_chi.dart';
 
@@ -71,7 +75,7 @@ String getLuckyHour(int jd) {
 
 /// Tiết khí
 String getSolarTerms(int jd) {
-  return solarTerms[getSunLongitude(jd + 1, 7.0)];
+  return solarTerms[toInt(sunLongitude(jd + 1 - 0.5 - 7 / 24) / pi * 12)];
 }
 
 String getCanChiOfStartHour(int jdn) {
