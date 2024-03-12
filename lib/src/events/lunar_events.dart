@@ -221,14 +221,6 @@ final getLunarEventsAsList = <LunarEvent>[
     mode: EventMode.readonly,
   ),
   LunarEvent(
-    date: LunarDateTime(0, 3, 3),
-    title: 'Tết Thanh Minh',
-    description:
-        'Dịp để mọi người đi thăm mộ, tảo mộ, thể hiện sự kính trọng và nhớ ơn đối với tổ tiên.',
-    repeat: LunarRepeat.yearly(),
-    mode: EventMode.readonly,
-  ),
-  LunarEvent(
     date: LunarDateTime(0, 3, 10),
     title: 'Giỗ Tổ Hùng Vương',
     description:
