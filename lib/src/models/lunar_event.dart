@@ -54,9 +54,9 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     return LunarRepeat.every(RepeatFrequency.daily);
   }
 
-  factory LunarRepeat.hourly() {
-    return LunarRepeat.every(RepeatFrequency.hourly);
-  }
+  // factory LunarRepeat.hourly() {
+  //   return LunarRepeat.every(RepeatFrequency.hourly);
+  // }
 
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = LunarDateTime.fromMillisecondsSinceEpoch(map['fromDate']);
@@ -156,7 +156,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   bool checkDate(LunarDateTime date) {
     return switch (repeat.frequency) {
       RepeatFrequency.no => checkNo(date),
-      RepeatFrequency.hourly => checkHourly(date),
+      // RepeatFrequency.hourly => checkHourly(date),
       RepeatFrequency.daily => checkDaily(date),
       RepeatFrequency.weekly => checkWeekly(date),
       RepeatFrequency.monthly => checkMonthly(date),

@@ -4,7 +4,7 @@ enum EventPriority { high, medium, low }
 
 enum RepeatFrequency {
   no,
-  hourly,
+  // hourly,
   daily,
   weekly,
   monthly,

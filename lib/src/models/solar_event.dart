@@ -56,9 +56,9 @@ class SolarRepeat extends BaseRepeat<DateTime> {
     return SolarRepeat.every(RepeatFrequency.daily);
   }
 
-  factory SolarRepeat.hourly() {
-    return SolarRepeat.every(RepeatFrequency.hourly);
-  }
+  // factory SolarRepeat.hourly() {
+  //   return SolarRepeat.every(RepeatFrequency.hourly);
+  // }
 
   factory SolarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = DateTime.fromMillisecondsSinceEpoch(map['fromDate']);
@@ -155,7 +155,7 @@ class SolarEvent extends BaseEvent<DateTime> {
   bool checkDate(DateTime date) {
     return switch (repeat.frequency) {
       RepeatFrequency.no => _checkNo(date),
-      RepeatFrequency.hourly => _checkHourly(date),
+      // RepeatFrequency.hourly => _checkHourly(date),
       RepeatFrequency.daily => _checkDaily(date),
       RepeatFrequency.weekly => _checkWeekly(date),
       RepeatFrequency.monthly => _checkMonthly(date),
