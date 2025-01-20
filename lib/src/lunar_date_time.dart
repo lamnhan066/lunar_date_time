@@ -9,12 +9,16 @@ class LunarDateTime extends DateTime {
   /// Danh sách các ngày lễ âm lịch, thời gian ở đây sẽ sử dụng [LunarDateTime].
   static LunarEventList get lunarEvents => getLunarEvents;
 
-  static List<LunarEvent> get lunarEventsAsList => getLunarEventsAsList;
+  static List<LunarEvent> get lunarEventsAsList {
+    return lunarEvents.events.values.expand((e) => e).toList();
+  }
 
   /// Danh sách các ngày lễ dương lịch, thời gian ở đây sẽ sử dụng [DateTime].
   static SolarEventList get solarEvents => getSolarEvents;
 
-  static List<SolarEvent> get solarEventsAsList => getSolarEventsAsList;
+  static List<SolarEvent> get solarEventsAsList {
+    return solarEvents.events.values.expand((e) => e).toList();
+  }
 
   static LunarDateTime parse(String formattedString) {
     return LunarDateTime.fromDateTime(DateTime.parse(formattedString));
