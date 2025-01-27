@@ -131,18 +131,7 @@ class LunarDateTime extends DateTime {
     Duration? timeZoneOffset,
     this._dateTime,
   ])  : _timeZoneOffset = timeZoneOffset ?? DateTime.now().timeZoneOffset,
-        super(
-            year, month, day, hour, minute, second, millisecond, microsecond) {
-    assert(year > 0, 'Năm phải là số dương');
-    assert(
-        month >= 1 && month <= 12, 'Tháng phải nằm trong khoảng từ 1 đến 12');
-    assert(day >= 1 && day <= 31, 'Ngày phải nằm trong khoảng từ 1 đến 31');
-    assert(hour >= 0 && hour < 24, 'Giờ phải nằm trong khoảng từ 0 đến 23');
-    assert(
-        minute >= 0 && minute < 60, 'Phút phải nằm trong khoảng từ 0 đến 59');
-    assert(
-        second >= 0 && second < 60, 'Giây phải nằm trong khoảng từ 0 đến 59');
-  }
+        super(year, month, day, hour, minute, second, millisecond, microsecond);
 
   /// Tạo một đối tượng [LunarDateTime] cho tháng nhuận.
   LunarDateTime.leapMonth(
