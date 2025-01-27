@@ -61,8 +61,12 @@ class SolarRepeat extends BaseRepeat<DateTime> {
   // }
 
   factory SolarRepeat.fromMap(Map<String, dynamic> map) {
-    final fromDate = DateTime.fromMillisecondsSinceEpoch(map['fromDate']);
-    final toDate = DateTime.fromMillisecondsSinceEpoch(map['toDate']);
+    final fromDate = map['fromDate'] is int
+        ? DateTime.fromMillisecondsSinceEpoch(map['fromDate'])
+        : DateTime.parse(map['fromDate']);
+    final toDate = map['toDate'] is int
+        ? DateTime.fromMillisecondsSinceEpoch(map['toDate'])
+        : DateTime.parse(map['toDate']);
     return SolarRepeat(
       fromDate: fromDate,
       toDate: toDate,
@@ -272,7 +276,9 @@ class SolarEvent extends BaseEvent<DateTime> {
 
   factory SolarEvent.fromMap(Map<String, dynamic> map) {
     return SolarEvent(
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      date: map['date'] is int
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : DateTime.parse(map['date']),
       title: map['title'],
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),
@@ -285,7 +291,9 @@ class SolarEvent extends BaseEvent<DateTime> {
           map['repeat'] != null ? SolarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
-      createdDate: DateTime.fromMillisecondsSinceEpoch(map['createdDate']),
+      createdDate: map['createdDate'] is int
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdDate'])
+          : DateTime.parse(map['createdDate']),
     );
   }
 

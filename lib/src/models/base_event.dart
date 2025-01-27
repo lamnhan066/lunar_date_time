@@ -61,7 +61,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      'date': date.millisecondsSinceEpoch,
+      'date': date.toIso8601String(),
       'title': title,
       'description': description,
       'mode': mode.name,
@@ -71,7 +71,7 @@ class BaseEvent<D extends DateTime> extends Equatable {
       'repeat': repeat.toJson(),
       'containTime': containTime,
       'isEndOfMonth': isEndOfMonth,
-      'createdDate': createdDate.millisecondsSinceEpoch,
+      'createdDate': createdDate.toIso8601String(),
     };
   }
 
@@ -124,8 +124,8 @@ class BaseRepeat<D extends DateTime> extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      'fromDate': fromDate.millisecondsSinceEpoch,
-      'toDate': toDate.millisecondsSinceEpoch,
+      'fromDate': fromDate.toIso8601String(),
+      'toDate': toDate.toIso8601String(),
       'frequency': frequency.name,
       'every': every,
     };

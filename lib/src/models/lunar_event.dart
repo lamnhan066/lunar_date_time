@@ -59,8 +59,12 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   // }
 
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
-    final fromDate = LunarDateTime.fromMillisecondsSinceEpoch(map['fromDate']);
-    final toDate = LunarDateTime.fromMillisecondsSinceEpoch(map['toDate']);
+    final fromDate = map['fromDate'] is int
+        ? LunarDateTime.fromMillisecondsSinceEpoch(map['fromDate'])
+        : LunarDateTime.parse(map['fromDate']);
+    final toDate = map['toDate'] is int
+        ? LunarDateTime.fromMillisecondsSinceEpoch(map['toDate'])
+        : LunarDateTime.parse(map['toDate']);
     return LunarRepeat(
       fromDate: fromDate,
       toDate: toDate,
@@ -273,7 +277,9 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
 
   factory LunarEvent.fromMap(Map<String, dynamic> map) {
     return LunarEvent(
-      date: LunarDateTime.fromMillisecondsSinceEpoch(map['date']),
+      date: map['date'] is int
+          ? LunarDateTime.fromMillisecondsSinceEpoch(map['date'])
+          : LunarDateTime.parse(map['date']),
       title: map['title'],
       description: map['description'],
       mode: EventMode.values.byName(map['mode']),
@@ -286,7 +292,9 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
           map['repeat'] != null ? LunarRepeat.fromJson(map['repeat']) : null,
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
-      createdDate: DateTime.fromMillisecondsSinceEpoch(map['createdDate']),
+      createdDate: map['createdDate'] is int
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdDate'])
+          : DateTime.parse(map['createdDate']),
     );
   }
 
