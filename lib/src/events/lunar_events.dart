@@ -63,7 +63,7 @@ final getLunarEvents = LunarEventList(events: {
   ],
   LunarDateTime(0, 2, 19): [
     LunarEvent(
-      date: LunarDateTime(0, 2, 14),
+      date: LunarDateTime(0, 2, 19),
       title: 'Ngày Vía Quan Âm Đản Sanh',
       description:
           'Ngày vía Quan Âm Bồ Tát, thể hiện lòng thành kính và cầu bình an.',
@@ -137,6 +137,16 @@ final getLunarEvents = LunarEventList(events: {
       title: 'Tết Trung Thu',
       description:
           'Lễ hội trăng tròn, hay còn gọi là Tết thiếu nhi, với hoạt động rước đèn, ăn bánh trung thu và ngắm trăng.',
+      repeat: LunarRepeat.yearly(),
+      mode: EventMode.readonly,
+    ),
+  ],
+  LunarDateTime(0, 9, 9): [
+    LunarEvent(
+      date: LunarDateTime(0, 9, 9),
+      title: 'Tết Trùng Cửu',
+      description:
+          'Ngày lễ truyền thống leo núi, uống rượu hoa cúc để cầu sức khỏe và trường thọ.',
       repeat: LunarRepeat.yearly(),
       mode: EventMode.readonly,
     ),
