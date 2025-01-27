@@ -6,6 +6,9 @@ import 'package:lunar_date_time/src/events/lunar_events.dart';
 import 'package:lunar_date_time/src/events/solar_events.dart';
 
 class LunarDateTime extends DateTime {
+  /// Force the timezone offset to +7 hours (Indochina Time, ICT).
+  static const Duration _fixedTimeZoneOffset = Duration(hours: 7);
+
   /// Danh sách các ngày lễ âm lịch, được lưu trữ để tránh tính toán lại.
   static final LunarEventList _lunarEvents = getLunarEvents;
   static final List<LunarEvent> _lunarEventsAsList =
@@ -61,46 +64,55 @@ class LunarDateTime extends DateTime {
   final int year;
 
   DateTime? _dateTime;
-  Duration _timeZoneOffset;
 
   /// Tạo một đối tượng [LunarDateTime] từ một đối tượng [DateTime].
   factory LunarDateTime.fromDateTime(DateTime dateTime) {
+    // Adjust the DateTime to the fixed +7 timezone.
+    final adjustedDateTime = dateTime.toUtc().add(_fixedTimeZoneOffset);
+
     final lunarDate = convertSolar2Lunar(
-      dateTime.day,
-      dateTime.month,
-      dateTime.year,
-      dateTime.timeZoneOffset.inMilliseconds / (1000.0 * 60.0 * 60.0),
+      adjustedDateTime.day,
+      adjustedDateTime.month,
+      adjustedDateTime.year,
+      _fixedTimeZoneOffset.inHours.toDouble(),
     );
 
     return LunarDateTime._internal(
       lunarDate.year,
       lunarDate.month,
       lunarDate.day,
-      dateTime.hour,
-      dateTime.minute,
-      dateTime.second,
-      dateTime.millisecond,
-      dateTime.microsecond,
+      adjustedDateTime.hour,
+      adjustedDateTime.minute,
+      adjustedDateTime.second,
+      adjustedDateTime.millisecond,
+      adjustedDateTime.microsecond,
       lunarDate.isLeapMonth,
-      dateTime.timeZoneOffset,
-      dateTime,
+      adjustedDateTime,
     );
   }
 
   /// Tạo một đối tượng [LunarDateTime] cho thời điểm hiện tại.
-  factory LunarDateTime.now() => LunarDateTime.fromDateTime(DateTime.now());
+  factory LunarDateTime.now() {
+    // Force the current time to use the +7 timezone.
+    final now = DateTime.now().toUtc().add(_fixedTimeZoneOffset);
+    return LunarDateTime.fromDateTime(now);
+  }
 
   /// Tạo một đối tượng [LunarDateTime] từ số mili giây kể từ thời điểm Unix epoch.
   factory LunarDateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
           {bool isUtc = false}) =>
-      DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch, isUtc: isUtc)
-          .toLunar;
+      LunarDateTime.fromDateTime(
+        DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
+            isUtc: isUtc),
+      );
 
   /// Tạo một đối tượng [LunarDateTime] từ số micro giây kể từ thời điểm Unix epoch.
   factory LunarDateTime.fromMicrosecondsSinceEpoch(int microsecondsSinceEpoch,
           {bool isUtc = false}) =>
-      DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch, isUtc: isUtc)
-          .toLunar;
+      LunarDateTime.fromDateTime(
+        DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch,
+            isUtc: isUtc),
+      );
 
   /// Constructor chính cho [LunarDateTime].
   LunarDateTime(
@@ -112,8 +124,7 @@ class LunarDateTime extends DateTime {
     this.second = 0,
     this.millisecond = 0,
     this.microsecond = 0,
-  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
-        isLeapMonth = false,
+  ])  : isLeapMonth = false,
         _dateTime = null,
         super(year, month, day, hour, minute, second, millisecond, microsecond);
 
@@ -128,10 +139,8 @@ class LunarDateTime extends DateTime {
     this.millisecond = 0,
     this.microsecond = 0,
     this.isLeapMonth = false,
-    Duration? timeZoneOffset,
     this._dateTime,
-  ])  : _timeZoneOffset = timeZoneOffset ?? DateTime.now().timeZoneOffset,
-        super(year, month, day, hour, minute, second, millisecond, microsecond);
+  ]) : super(year, month, day, hour, minute, second, millisecond, microsecond);
 
   /// Tạo một đối tượng [LunarDateTime] cho tháng nhuận.
   LunarDateTime.leapMonth(
@@ -143,8 +152,7 @@ class LunarDateTime extends DateTime {
     this.second = 0,
     this.millisecond = 0,
     this.microsecond = 0,
-  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
-        isLeapMonth = true,
+  ])  : isLeapMonth = true,
         _dateTime = null,
         super(year, month, day, hour, minute, second, millisecond, microsecond);
 
@@ -189,10 +197,8 @@ class LunarDateTime extends DateTime {
   String get solarTerms => getSolarTerms(julianDayNumber);
 
   /// Chuyển đổi [LunarDateTime] thành [DateTime].
-  DateTime toDateTime([Duration? timeZoneOffset]) {
-    timeZoneOffset ??= this.timeZoneOffset;
-
-    if (_dateTime != null && _timeZoneOffset == timeZoneOffset) {
+  DateTime toDateTime() {
+    if (_dateTime != null) {
       return _dateTime!;
     }
 
@@ -201,7 +207,7 @@ class LunarDateTime extends DateTime {
       month,
       year,
       isLeapMonth ? 1 : 0,
-      timeZoneOffset.inMilliseconds / (1000.0 * 60.0 * 60.0),
+      _fixedTimeZoneOffset.inHours.toDouble(),
     );
 
     final dateTime0 = DateTime(
@@ -216,8 +222,6 @@ class LunarDateTime extends DateTime {
     );
 
     _dateTime = dateTime0;
-    _timeZoneOffset = timeZoneOffset;
-
     return dateTime0;
   }
 
@@ -243,7 +247,6 @@ class LunarDateTime extends DateTime {
       millisecond ?? this.millisecond,
       microsecond ?? this.microsecond,
       isLeapMonth ?? this.isLeapMonth,
-      _timeZoneOffset,
       _dateTime,
     );
   }
@@ -284,7 +287,7 @@ class LunarDateTime extends DateTime {
   }
 
   @override
-  bool get isUtc => toDateTime().isUtc;
+  bool get isUtc => false; // Always false since we're forcing +7 timezone.
 
   @override
   int get microsecondsSinceEpoch => toDateTime().microsecondsSinceEpoch;
@@ -293,10 +296,10 @@ class LunarDateTime extends DateTime {
   int get millisecondsSinceEpoch => toDateTime().millisecondsSinceEpoch;
 
   @override
-  String get timeZoneName => toDateTime().timeZoneName;
+  String get timeZoneName => 'ICT'; // Indochina Time.
 
   @override
-  Duration get timeZoneOffset => _timeZoneOffset;
+  Duration get timeZoneOffset => _fixedTimeZoneOffset;
 
   @override
   String toIso8601String() {
@@ -305,7 +308,7 @@ class LunarDateTime extends DateTime {
 
   @override
   DateTime toLocal() {
-    return toDateTime().toLocal();
+    return toDateTime();
   }
 
   @override
@@ -325,8 +328,7 @@ class LunarDateTime extends DateTime {
         other.day == day &&
         other.hour == hour &&
         other.minute == minute &&
-        other.second == second &&
-        other._timeZoneOffset == _timeZoneOffset;
+        other.second == second;
   }
 
   @override
@@ -338,7 +340,6 @@ class LunarDateTime extends DateTime {
         hour,
         minute,
         second,
-        _timeZoneOffset,
       );
 
   @override
