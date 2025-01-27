@@ -6,30 +6,41 @@ import 'package:lunar_date_time/src/events/lunar_events.dart';
 import 'package:lunar_date_time/src/events/solar_events.dart';
 
 class LunarDateTime extends DateTime {
-  /// Danh sách các ngày lễ âm lịch, thời gian ở đây sẽ sử dụng [LunarDateTime].
-  static LunarEventList get lunarEvents => getLunarEvents;
+  /// Danh sách các ngày lễ âm lịch, được lưu trữ để tránh tính toán lại.
+  static final LunarEventList _lunarEvents = getLunarEvents;
+  static final List<LunarEvent> _lunarEventsAsList =
+      _lunarEvents.events.values.expand((e) => e).toList();
 
-  static List<LunarEvent> get lunarEventsAsList {
-    return lunarEvents.events.values.expand((e) => e).toList();
-  }
+  /// Danh sách các ngày lễ dương lịch, được lưu trữ để tránh tính toán lại.
+  static final SolarEventList _solarEvents = getSolarEvents;
+  static final List<SolarEvent> _solarEventsAsList =
+      _solarEvents.events.values.expand((e) => e).toList();
 
-  /// Danh sách các ngày lễ dương lịch, thời gian ở đây sẽ sử dụng [DateTime].
-  static SolarEventList get solarEvents => getSolarEvents;
+  /// Trả về danh sách các ngày lễ âm lịch.
+  static LunarEventList get lunarEvents => _lunarEvents;
 
-  static List<SolarEvent> get solarEventsAsList {
-    return solarEvents.events.values.expand((e) => e).toList();
-  }
+  /// Trả về danh sách các ngày lễ âm lịch dưới dạng một danh sách phẳng.
+  static List<LunarEvent> get lunarEventsAsList => _lunarEventsAsList;
 
+  /// Trả về danh sách các ngày lễ dương lịch.
+  static SolarEventList get solarEvents => _solarEvents;
+
+  /// Trả về danh sách các ngày lễ dương lịch dưới dạng một danh sách phẳng.
+  static List<SolarEvent> get solarEventsAsList => _solarEventsAsList;
+
+  /// Phân tích một chuỗi thành đối tượng [LunarDateTime].
   static LunarDateTime parse(String formattedString) {
     return LunarDateTime.fromDateTime(DateTime.parse(formattedString));
   }
 
+  /// Cố gắng phân tích một chuỗi thành đối tượng [LunarDateTime].
+  /// Trả về `null` nếu không thể phân tích.
   static LunarDateTime? tryParse(String formattedString) {
     final parsed = DateTime.tryParse(formattedString);
     return parsed == null ? null : LunarDateTime.fromDateTime(parsed);
   }
 
-  /// Nếu `true` thí tháng hiện tại là tháng nhuần
+  /// `true` nếu tháng hiện tại là tháng nhuận.
   final bool isLeapMonth;
 
   @override
@@ -50,8 +61,105 @@ class LunarDateTime extends DateTime {
   final int year;
 
   DateTime? _dateTime;
+  Duration _timeZoneOffset;
 
-  /// Giá trị ngày Julian.
+  /// Tạo một đối tượng [LunarDateTime] từ một đối tượng [DateTime].
+  factory LunarDateTime.fromDateTime(DateTime dateTime) {
+    final lunarDate = convertSolar2Lunar(
+      dateTime.day,
+      dateTime.month,
+      dateTime.year,
+      dateTime.timeZoneOffset.inMilliseconds / (1000.0 * 60.0 * 60.0),
+    );
+
+    return LunarDateTime._internal(
+      lunarDate.year,
+      lunarDate.month,
+      lunarDate.day,
+      dateTime.hour,
+      dateTime.minute,
+      dateTime.second,
+      dateTime.millisecond,
+      dateTime.microsecond,
+      lunarDate.isLeapMonth,
+      dateTime.timeZoneOffset,
+      dateTime,
+    );
+  }
+
+  /// Tạo một đối tượng [LunarDateTime] cho thời điểm hiện tại.
+  factory LunarDateTime.now() => LunarDateTime.fromDateTime(DateTime.now());
+
+  /// Tạo một đối tượng [LunarDateTime] từ số mili giây kể từ thời điểm Unix epoch.
+  factory LunarDateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
+          {bool isUtc = false}) =>
+      DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch, isUtc: isUtc)
+          .toLunar;
+
+  /// Tạo một đối tượng [LunarDateTime] từ số micro giây kể từ thời điểm Unix epoch.
+  factory LunarDateTime.fromMicrosecondsSinceEpoch(int microsecondsSinceEpoch,
+          {bool isUtc = false}) =>
+      DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch, isUtc: isUtc)
+          .toLunar;
+
+  /// Constructor chính cho [LunarDateTime].
+  LunarDateTime(
+    this.year, [
+    this.month = 1,
+    this.day = 1,
+    this.hour = 0,
+    this.minute = 0,
+    this.second = 0,
+    this.millisecond = 0,
+    this.microsecond = 0,
+  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
+        isLeapMonth = false,
+        _dateTime = null,
+        super(year, month, day, hour, minute, second, millisecond, microsecond);
+
+  /// Constructor nội bộ cho [LunarDateTime].
+  LunarDateTime._internal(
+    this.year, [
+    this.month = 1,
+    this.day = 1,
+    this.hour = 0,
+    this.minute = 0,
+    this.second = 0,
+    this.millisecond = 0,
+    this.microsecond = 0,
+    this.isLeapMonth = false,
+    Duration? timeZoneOffset,
+    this._dateTime,
+  ])  : _timeZoneOffset = timeZoneOffset ?? DateTime.now().timeZoneOffset,
+        super(
+            year, month, day, hour, minute, second, millisecond, microsecond) {
+    assert(year > 0, 'Năm phải là số dương');
+    assert(
+        month >= 1 && month <= 12, 'Tháng phải nằm trong khoảng từ 1 đến 12');
+    assert(day >= 1 && day <= 31, 'Ngày phải nằm trong khoảng từ 1 đến 31');
+    assert(hour >= 0 && hour < 24, 'Giờ phải nằm trong khoảng từ 0 đến 23');
+    assert(
+        minute >= 0 && minute < 60, 'Phút phải nằm trong khoảng từ 0 đến 59');
+    assert(
+        second >= 0 && second < 60, 'Giây phải nằm trong khoảng từ 0 đến 59');
+  }
+
+  /// Tạo một đối tượng [LunarDateTime] cho tháng nhuận.
+  LunarDateTime.leapMonth(
+    this.year, [
+    this.month = 1,
+    this.day = 1,
+    this.hour = 0,
+    this.minute = 0,
+    this.second = 0,
+    this.millisecond = 0,
+    this.microsecond = 0,
+  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
+        isLeapMonth = true,
+        _dateTime = null,
+        super(year, month, day, hour, minute, second, millisecond, microsecond);
+
+  /// Số ngày Julian cho ngày hiện tại.
   int get julianDayNumber {
     final solar = toDateTime();
     return jdFromDate(solar.day, solar.month, solar.year);
@@ -69,132 +177,25 @@ class LunarDateTime extends DateTime {
   /// Can chi của ngày hiện tại.
   String get canChiOfDay => getCanChiOfDay(julianDayNumber);
 
-  /// Giờ hoàng đạo.
+  /// Giờ hoàng đạo của ngày hiện tại.
   String get luckyHour => getLuckyHour(julianDayNumber);
 
-  /// Tiết khí.
+  /// Tiết khí của ngày hiện tại.
   String get solarTerms => getSolarTerms(julianDayNumber);
 
-  /// Lưu [timeZoneOffset] khi chuyển từ [DateTime], đồng
-  Duration _timeZoneOffset;
-
-  LunarDateTime._(
-    this.year, [
-    this.month = 1,
-    this.day = 1,
-    this.hour = 0,
-    this.minute = 0,
-    this.second = 0,
-    this.millisecond = 0,
-    this.microsecond = 0,
-    this.isLeapMonth = false,
-    Duration? timeZoneOffset,
-    this._dateTime,
-  ])  : _timeZoneOffset = timeZoneOffset ?? DateTime.now().timeZoneOffset,
-        super(year, month, day, hour, minute, second, millisecond, microsecond);
-
-  LunarDateTime(
-    this.year, [
-    this.month = 1,
-    this.day = 1,
-    this.hour = 0,
-    this.minute = 0,
-    this.second = 0,
-    this.millisecond = 0,
-    this.microsecond = 0,
-  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
-        isLeapMonth = false,
-        _dateTime = null,
-        super(year, month, day, hour, minute, second, millisecond, microsecond);
-
-  LunarDateTime.leapMonth(
-    this.year, [
-    this.month = 1,
-    this.day = 1,
-    this.hour = 0,
-    this.minute = 0,
-    this.second = 0,
-    this.millisecond = 0,
-    this.microsecond = 0,
-  ])  : _timeZoneOffset = DateTime.now().timeZoneOffset,
-        isLeapMonth = true,
-        _dateTime = null,
-        super(year, month, day, hour, minute, second, millisecond, microsecond);
-
-  factory LunarDateTime.fromDateTime(DateTime dateTime) {
-    final lunarDate = convertSolar2Lunar(
-      dateTime.day,
-      dateTime.month,
-      dateTime.year,
-      dateTime.timeZoneOffset.inMilliseconds / (1000.0 * 60.0 * 60.0),
-    );
-
-    return LunarDateTime._(
-      lunarDate.year,
-      lunarDate.month,
-      lunarDate.day,
-      dateTime.hour,
-      dateTime.minute,
-      dateTime.second,
-      dateTime.millisecond,
-      dateTime.microsecond,
-      lunarDate.isLeapMonth,
-      dateTime.timeZoneOffset,
-      dateTime,
-    );
-  }
-
-  factory LunarDateTime.now() => LunarDateTime.fromDateTime(DateTime.now());
-
-  factory LunarDateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
-          {bool isUtc = false}) =>
-      DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch, isUtc: isUtc)
-          .toLunar;
-
-  factory LunarDateTime.fromMicrosecondsSinceEpoch(int microsecondsSinceEpoch,
-          {bool isUtc = false}) =>
-      DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch, isUtc: isUtc)
-          .toLunar;
-
-  LunarDateTime copyWith({
-    int? year,
-    int? month,
-    int? day,
-    int? hour,
-    int? minute,
-    int? second,
-    int? millisecond,
-    int? microsecond,
-    bool? leapMonth,
-  }) {
-    return ((leapMonth ?? isLeapMonth)
-        ? LunarDateTime.leapMonth
-        : LunarDateTime.new)(
-      year ?? this.year,
-      month ?? this.month,
-      day ?? this.day,
-      hour ?? this.hour,
-      minute ?? this.minute,
-      second ?? this.second,
-      millisecond ?? this.millisecond,
-      microsecond ?? this.microsecond,
-    );
-  }
-
-  /// Chuyển đổi từ [LunarDateTime] sang [DateTime] với tham số [timeZoneOffset]
-  /// là độ chênh lệch giữa Local và UTC, mặc định sẽ sử dụng giá trị từ
-  /// [DateTime.now].
+  /// Chuyển đổi [LunarDateTime] thành [DateTime].
   DateTime toDateTime([Duration? timeZoneOffset]) {
+    timeZoneOffset ??= this.timeZoneOffset;
+
     if (_dateTime != null && _timeZoneOffset == timeZoneOffset) {
       return _dateTime!;
     }
 
-    timeZoneOffset ??= this.timeZoneOffset;
     final solar = convertLunar2Solar(
       day,
       month,
       year,
-      isLeapMonth == true ? 1 : 0,
+      isLeapMonth ? 1 : 0,
       timeZoneOffset.inMilliseconds / (1000.0 * 60.0 * 60.0),
     );
 
@@ -209,10 +210,37 @@ class LunarDateTime extends DateTime {
       microsecond,
     );
 
-    if (_timeZoneOffset == timeZoneOffset) {
-      _dateTime = dateTime0;
-    }
+    _dateTime = dateTime0;
+    _timeZoneOffset = timeZoneOffset;
+
     return dateTime0;
+  }
+
+  /// Tạo một bản sao của [LunarDateTime] với các trường được cập nhật.
+  LunarDateTime copyWith({
+    int? year,
+    int? month,
+    int? day,
+    int? hour,
+    int? minute,
+    int? second,
+    int? millisecond,
+    int? microsecond,
+    bool? isLeapMonth,
+  }) {
+    return LunarDateTime._internal(
+      year ?? this.year,
+      month ?? this.month,
+      day ?? this.day,
+      hour ?? this.hour,
+      minute ?? this.minute,
+      second ?? this.second,
+      millisecond ?? this.millisecond,
+      microsecond ?? this.microsecond,
+      isLeapMonth ?? this.isLeapMonth,
+      _timeZoneOffset,
+      _dateTime,
+    );
   }
 
   @override
@@ -285,8 +313,6 @@ class LunarDateTime extends DateTime {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
     return other is LunarDateTime &&
         other.isLeapMonth == isLeapMonth &&
         other.year == year &&
@@ -299,16 +325,16 @@ class LunarDateTime extends DateTime {
   }
 
   @override
-  int get hashCode {
-    return isLeapMonth.hashCode ^
-        year.hashCode ^
-        month.hashCode ^
-        day.hashCode ^
-        hour.hashCode ^
-        minute.hashCode ^
-        second.hashCode ^
-        _timeZoneOffset.hashCode;
-  }
+  int get hashCode => Object.hash(
+        isLeapMonth,
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        _timeZoneOffset,
+      );
 
   @override
   String toString() {
