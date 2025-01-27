@@ -55,9 +55,9 @@ final getSolarEvents = SolarEventList(events: {
       mode: EventMode.readonly,
     ),
   ],
-  DateTime(0, 3, 23): [
+  DateTime(0, 3, 20): [
     SolarEvent(
-      date: DateTime(1946, 3, 23),
+      date: DateTime(2013, 3, 20),
       title: 'Ngày Quốc tế Hạnh phúc',
       description:
           'Nhấn mạnh tầm quan trọng của hạnh phúc trong cuộc sống của mỗi người và cộng đồng.',
@@ -125,16 +125,6 @@ final getSolarEvents = SolarEventList(events: {
       mode: EventMode.readonly,
     ),
   ],
-  DateTime(0, 5, 13): [
-    SolarEvent(
-      date: DateTime(1929, 5, 13),
-      title: 'Ngày thành lập Công đoàn Việt Nam',
-      description:
-          'Tôn vinh sự đóng góp của công đoàn trong việc thúc đẩy các phong trào đấu tranh bảo vệ quyền lợi của người lao động, nâng cao đời sống của họ, và phát triển nền kinh tế quốc dân.',
-      repeat: SolarRepeat.yearly(),
-      mode: EventMode.readonly,
-    ),
-  ],
   DateTime(0, 5, 15): [
     SolarEvent(
       date: DateTime(1941, 5, 15),
@@ -177,10 +167,10 @@ final getSolarEvents = SolarEventList(events: {
   ],
   DateTime(0, 6, 17): [
     SolarEvent(
-      date: DateTime(0, 6, 17),
-      title: 'Ngày Môi trường Thế giới',
+      date: DateTime(1994, 6, 17),
+      title: 'Ngày Thế giới chống sa mạc hóa và hạn hán',
       description:
-          'Kêu gọi các hành động toàn cầu để bảo vệ đất đai, ngừng tình trạng sa mạc hóa và khắc phục các vấn đề môi trường do con người gây ra, cũng như để duy trì môi trường sống bền vững cho thế hệ tương lai.',
+          'Kêu gọi hành động toàn cầu để bảo vệ đất đai, ngăn chặn sa mạc hóa và phục hồi các vùng đất bị suy thoái.',
       repeat: SolarRepeat.yearly(),
       mode: EventMode.readonly,
     ),
@@ -225,9 +215,9 @@ final getSolarEvents = SolarEventList(events: {
       mode: EventMode.readonly,
     ),
   ],
-  DateTime(0, 7, 21): [
+  DateTime(0, 9, 21): [
     SolarEvent(
-      date: DateTime(1982, 7, 21),
+      date: DateTime(1982, 9, 21),
       title: 'Ngày Quốc tế Hòa bình',
       description:
           'Ngày tôn vinh hòa bình toàn cầu, khuyến khích chấm dứt chiến tranh và xung đột.',
@@ -257,7 +247,7 @@ final getSolarEvents = SolarEventList(events: {
   ],
   DateTime(0, 8, 19): [
     SolarEvent(
-      date: DateTime(0, 8, 19),
+      date: DateTime(1945, 8, 19),
       title: 'Ngày tổng khởi nghĩa',
       description:
           'Đánh dấu sự kiện tổng khởi nghĩa giành chính quyền trong cả nước năm 1945, mở đầu cho sự nghiệp độc lập tự do.',
