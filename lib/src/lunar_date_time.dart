@@ -166,16 +166,32 @@ class LunarDateTime extends DateTime {
   }
 
   /// Can chi của năm hiện tại.
+  @Deprecated('Sử dụng `stemBranchOfYear`')
   String get canChiOfYear => getCanChiOfYear(year);
 
   /// Can chi của tháng hiện tại.
+  @Deprecated('Sử dụng `stemBranchOfMonth`')
   String get canChiOfMonth => getCanChiMonth(month, year);
 
   /// Can của giờ hiện tại.
+  @Deprecated('Sử dụng `stemOfHour`')
   String get canOfHour => getCanOfHour(julianDayNumber);
 
   /// Can chi của ngày hiện tại.
+  @Deprecated('Sử dụng `stemBranchOfDay`')
   String get canChiOfDay => getCanChiOfDay(julianDayNumber);
+
+  /// Can chi của năm hiện tại.
+  String get stemBranchOfYear => getCanChiOfYear(year);
+
+  /// Can chi của tháng hiện tại.
+  String get stemBranchOfMonth => getCanChiMonth(month, year);
+
+  /// Can của giờ hiện tại.
+  String get stemOfHour => getCanOfHour(julianDayNumber);
+
+  /// Can chi của ngày hiện tại.
+  String get stemBranchOfDay => getCanChiOfDay(julianDayNumber);
 
   /// Giờ hoàng đạo của ngày hiện tại.
   String get luckyHour => getLuckyHour(julianDayNumber);
