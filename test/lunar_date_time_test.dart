@@ -74,7 +74,7 @@ void main() {
           ]
         },
       );
-      final json1 = events.toJson();
+      final json1 = events1.toJson();
 
       expect(LunarEventList.fromJson(json), equals(events));
       expect(LunarEventList.fromJson(json1), equals(events1));
