@@ -7,9 +7,9 @@ import 'enums.dart';
 class BaseEvent<D extends DateTime> extends Equatable {
   final D date;
   final String title;
-  final String? description;
-  final String? location;
-  final String? id;
+  final String description;
+  final String location;
+  final String id;
   final EventPriority priority;
   final BaseRepeat<D> repeat;
   final EventMode mode;

@@ -89,11 +89,11 @@ class SolarRepeat extends BaseRepeat<DateTime> {
 
 class SolarEvent extends BaseEvent<DateTime> {
   SolarEvent({
-    super.id,
+    super.id = '',
     required super.date,
     required super.title,
-    super.description,
-    super.location,
+    super.description = '',
+    super.location = '',
     super.mode = EventMode.normal,
     super.priority = EventPriority.medium,
     SolarRepeat? repeat,
@@ -280,10 +280,10 @@ class SolarEvent extends BaseEvent<DateTime> {
           ? DateTime.fromMillisecondsSinceEpoch(map['date'])
           : DateTime.parse(map['date']),
       title: map['title'],
-      description: map['description'],
+      description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),
-      location: map['location'],
-      id: map['id'],
+      location: map['location'] ?? '',
+      id: map['id'] ?? '',
       priority: map['priority'] != null
           ? EventPriority.values.byName(map['priority'])
           : EventPriority.medium,

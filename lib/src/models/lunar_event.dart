@@ -84,11 +84,11 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
 
 class LunarEvent extends BaseEvent<LunarDateTime> {
   LunarEvent({
-    super.id,
+    super.id = '',
     required super.date,
     required super.title,
-    super.description,
-    super.location,
+    super.description = '',
+    super.location = '',
     super.mode = EventMode.normal,
     super.priority = EventPriority.medium,
     LunarRepeat? repeat,
@@ -281,10 +281,10 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
           ? LunarDateTime.fromMillisecondsSinceEpoch(map['date'])
           : LunarDateTime.parse(map['date']),
       title: map['title'],
-      description: map['description'],
+      description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),
-      location: map['location'],
-      id: map['id'],
+      location: map['location'] ?? '',
+      id: map['id'] ?? '',
       priority: map['priority'] != null
           ? EventPriority.values.byName(map['priority'])
           : EventPriority.medium,
