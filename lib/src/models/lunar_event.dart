@@ -159,16 +159,16 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   /// Kiểm tra xem event này có phù hợp với `date` không.
   bool checkDate(LunarDateTime date) {
     return switch (repeat.frequency) {
-      RepeatFrequency.no => checkNo(date),
+      RepeatFrequency.no => _checkNo(date),
       // RepeatFrequency.hourly => checkHourly(date),
-      RepeatFrequency.daily => checkDaily(date),
-      RepeatFrequency.weekly => checkWeekly(date),
-      RepeatFrequency.monthly => checkMonthly(date),
-      RepeatFrequency.yearly => checkYearly(date),
+      RepeatFrequency.daily => _checkDaily(date),
+      RepeatFrequency.weekly => _checkWeekly(date),
+      RepeatFrequency.monthly => _checkMonthly(date),
+      RepeatFrequency.yearly => _checkYearly(date),
     };
   }
 
-  bool checkNo(LunarDateTime date) {
+  bool _checkNo(LunarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
         this.date.year == date.year) {
@@ -177,20 +177,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
-  bool checkHourly(LunarDateTime date) {
-    if (!isValidDateInRange(date)) return false;
-
-    final everyInMilliseconds =
-        date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
-    final every = Duration(milliseconds: everyInMilliseconds).inHours;
-    if (every % repeat.every == 0) {
-      return true;
-    }
-
-    return false;
-  }
-
-  bool checkDaily(LunarDateTime date) {
+  bool _checkDaily(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     final everyInMilliseconds =
@@ -203,7 +190,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
-  bool checkWeekly(LunarDateTime date) {
+  bool _checkWeekly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     if (this.date.weekday == date.weekday) {
@@ -217,7 +204,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
-  bool checkMonthly(LunarDateTime date) {
+  bool _checkMonthly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     if (isEndOfMonth) {
@@ -237,7 +224,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
-  bool checkYearly(LunarDateTime date) {
+  bool _checkYearly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     if (this.date.month == date.month) {
@@ -275,7 +262,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return date.isAfter(this.date) && date.isBefore(repeat.toDate);
   }
 
-  factory LunarEvent.fromMap(Map<String, dynamic> map) {
+  factory LunarEvent.fromMap(Map map) {
     return LunarEvent(
       date: map['date'] is int
           ? LunarDateTime.fromMillisecondsSinceEpoch(map['date'])

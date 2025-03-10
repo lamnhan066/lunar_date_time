@@ -176,19 +176,6 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  bool _checkHourly(DateTime date) {
-    if (!_isValidDateInRange(date)) return false;
-
-    final everyInMilliseconds =
-        date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
-    final every = Duration(milliseconds: everyInMilliseconds).inHours;
-    if (every % repeat.every == 0) {
-      return true;
-    }
-
-    return false;
-  }
-
   bool _checkDaily(DateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
@@ -274,7 +261,7 @@ class SolarEvent extends BaseEvent<DateTime> {
     return date.isAfter(this.date) && date.isBefore(repeat.toDate);
   }
 
-  factory SolarEvent.fromMap(Map<String, dynamic> map) {
+  factory SolarEvent.fromMap(Map map) {
     return SolarEvent(
       date: map['date'] is int
           ? DateTime.fromMillisecondsSinceEpoch(map['date'])
