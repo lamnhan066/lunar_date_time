@@ -5,12 +5,9 @@ import 'package:lunar_date_time/src/utils.dart';
 import 'base.dart';
 import 'models/can_chi.dart';
 
-// String getCanChiYear(int year) {
-//   final String can = canYear[year % 10];
-//   final String chi = chiYear[year % 12];
-//   return '$can $chi';
-// }
-
+/// Lấy Can Chi của tháng dựa trên tháng và năm
+/// [month] là tháng (1-12)
+/// [year] là năm
 String getCanChiMonth(int month, int year) {
   final String chi = chiMonth[month - 1];
   final String can = canYear[year % 10];
@@ -34,31 +31,29 @@ String getCanChiMonth(int month, int year) {
   return '${canYear[(indexCan + month - 1) % 10]} $chi';
 }
 
-// getDayName(lunarDate) {
-//  if (lunarDate.day == 0) {
-//    return "";
-//  }
-//  var cc = getCanChi(lunarDate);
-//  var s = "Ngày " + cc[0] +", tháng "+cc[1] + ", năm " + cc[2];
-//  return s;
-//}
-
+/// Lấy Can Chi của năm
+/// [year] là năm
 String getCanChiOfYear(int year) {
   return "${can[(year + 6) % 10]} ${chi[(year + 8) % 12]}";
 }
 
+/// Lấy Can của giờ dựa trên chỉ số ngày Julian (JDN)
+/// [jdn] là chỉ số ngày Julian
 String getCanOfHour(int jdn) {
   return can[(jdn - 1) * 2 % 10];
 }
 
+/// Lấy Can Chi của ngày dựa trên chỉ số ngày Julian (JDN)
+/// [jdn] là chỉ số ngày Julian
 String getCanChiOfDay(int jdn) {
   return "${can[(jdn + 9) % 10]} ${chi[(jdn + 1) % 12]}";
 }
 
-/// Giờ hoàng đạo
+/// Lấy giờ hoàng đạo dựa trên chỉ số ngày Julian (JDN)
+/// [jd] là chỉ số ngày Julian
 String getLuckyHour(int jd) {
   final int chiOfDay = (jd + 1) % 12;
-  // same values for Ty' (1) and Ngo. (6), for Suu and Mui etc.
+  // Các giá trị giống nhau cho Tý (1) và Ngọ (6), Sửu và Mùi, v.v.
   final String gioHD = luckyHour[chiOfDay % 6];
   String ret = "";
   int count = 0;
@@ -73,11 +68,14 @@ String getLuckyHour(int jd) {
   return ret;
 }
 
-/// Tiết khí
+/// Lấy tiết khí dựa trên chỉ số ngày Julian (JDN)
+/// [jd] là chỉ số ngày Julian
 String getSolarTerms(int jd) {
   return solarTerms[toInt(sunLongitude(jd + 1 - 0.5 - 7 / 24) / pi * 12)];
 }
 
+/// Lấy Can Chi của giờ bắt đầu dựa trên chỉ số ngày Julian (JDN)
+/// [jdn] là chỉ số ngày Julian
 String getCanChiOfStartHour(int jdn) {
   return '${can[(jdn - 1) * 2 % 10]} ${chi[0]}';
 }
