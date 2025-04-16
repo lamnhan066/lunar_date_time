@@ -12,7 +12,6 @@ class SolarRepeat extends BaseRepeat<DateTime> {
     required super.every,
   });
 
-  @override
   SolarRepeat copyWith({
     DateTime? fromDate,
     DateTime? toDate,
@@ -85,6 +84,16 @@ class SolarRepeat extends BaseRepeat<DateTime> {
 
   @override
   List<Object> get props => [fromDate, toDate, frequency, every];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'fromDate': fromDate.toIso8601String(),
+      'toDate': toDate.toIso8601String(),
+      'frequency': frequency.name,
+      'every': every,
+    };
+  }
 }
 
 class SolarEvent extends BaseEvent<DateTime> {
@@ -105,7 +114,7 @@ class SolarEvent extends BaseEvent<DateTime> {
           createdDate: createdDate ?? DateTime.now(),
         );
 
-  factory SolarEvent.fromBaseEvent(BaseEvent event) {
+  factory SolarEvent.fromBaseEvent(BaseEvent<DateTime> event) {
     return SolarEvent(
       id: event.id,
       date: event.date,
@@ -126,7 +135,6 @@ class SolarEvent extends BaseEvent<DateTime> {
     );
   }
 
-  @override
   SolarEvent copyWith({
     DateTime? date,
     String? title,
@@ -290,5 +298,22 @@ class SolarEvent extends BaseEvent<DateTime> {
   @override
   String toString() {
     return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date.toIso8601String(),
+      'title': title,
+      'description': description,
+      'mode': mode.name,
+      'location': location,
+      'id': id,
+      'priority': priority.name,
+      'repeat': repeat.toJson(),
+      'containTime': containTime,
+      'isEndOfMonth': isEndOfMonth,
+      'createdDate': createdDate.toIso8601String(),
+    };
   }
 }

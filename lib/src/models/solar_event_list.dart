@@ -1,20 +1,15 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-import 'package:lunar_date_time/src/models/base_event_list.dart';
+import 'package:lunar_date_time/lunar_date_time.dart';
 
-import 'solar_event.dart';
-
-class SolarEventList extends Equatable implements BaseEventList {
-  @override
-  final Map<DateTime, List<SolarEvent>> events;
-
+class SolarEventList extends BaseEventList<DateTime> with EquatableMixin {
   SolarEventList({
-    required this.events,
+    required super.events,
   });
 
   @override
-  void add(DateTime date, SolarEvent event) {
+  void add(DateTime date, BaseEvent<DateTime> event) {
     final eventsOfDate = events[date];
     if (eventsOfDate == null) {
       events[date] = [event];
@@ -24,7 +19,7 @@ class SolarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  void addAll(covariant DateTime date, covariant List<SolarEvent> events) {
+  void addAll(DateTime date, List<BaseEvent<DateTime>> events) {
     final eventsOfDate = this.events[date];
     if (eventsOfDate == null) {
       this.events[date] = events;
@@ -34,13 +29,13 @@ class SolarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  bool remove(covariant DateTime date, covariant SolarEvent event) {
+  bool remove(DateTime date, BaseEvent<DateTime> event) {
     final eventsOfDate = events[date];
     return eventsOfDate != null ? eventsOfDate.remove(event) : false;
   }
 
   @override
-  List<SolarEvent> removeAll(DateTime date) {
+  List<BaseEvent<DateTime>> removeAll(DateTime date) {
     return events.remove(date) ?? [];
   }
 
@@ -50,7 +45,7 @@ class SolarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  List<SolarEvent> getEvents(DateTime date) {
+  List<BaseEvent<DateTime>> getEvents(DateTime date) {
     return events[date] ?? [];
   }
 

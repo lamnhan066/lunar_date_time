@@ -1,26 +1,25 @@
+import 'dart:convert';
+
 import 'base_event.dart';
 
-abstract class BaseEventList {
-  final Map<DateTime, List<BaseEvent>> events;
+abstract class BaseEventList<D extends Object> {
+  final Map<D, List<BaseEvent<D>>> events;
 
-  BaseEventList({
-    required this.events,
-  });
+  BaseEventList({required this.events});
 
-  void add(covariant DateTime date, covariant BaseEvent event);
+  void add(D date, BaseEvent<D> event);
 
-  void addAll(covariant DateTime date, List<BaseEvent> events);
+  void addAll(D date, List<BaseEvent<D>> events);
 
-  bool remove(DateTime date, BaseEvent event);
+  bool remove(D date, BaseEvent<D> event);
 
-  List<BaseEvent> removeAll(DateTime date);
+  List<BaseEvent<D>> removeAll(D date);
+
+  List<BaseEvent<D>> getEvents(D date);
 
   void clear();
 
-  List<BaseEvent> getEvents(DateTime date);
-
-  /// Map<DateTime in microsecondsSinceEpoch, List of BaseEvent>
   Map<String, dynamic> toMap();
 
-  String toJson();
+  String toJson() => jsonEncode(toMap());
 }

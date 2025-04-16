@@ -10,7 +10,6 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     required super.every,
   });
 
-  @override
   LunarRepeat copyWith({
     LunarDateTime? fromDate,
     LunarDateTime? toDate,
@@ -80,6 +79,16 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   String toString() {
     return 'LunarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'fromDate': fromDate.toIso8601String(),
+      'toDate': toDate.toIso8601String(),
+      'frequency': frequency.name,
+      'every': every,
+    };
+  }
 }
 
 class LunarEvent extends BaseEvent<LunarDateTime> {
@@ -100,24 +109,18 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
           createdDate: createdDate ?? DateTime.now(),
         );
 
-  factory LunarEvent.fromBaseEvent(BaseEvent event) {
+  factory LunarEvent.fromBaseEvent(BaseEvent<LunarDateTime> event) {
     return LunarEvent(
       id: event.id,
-      date: (event.date is LunarDateTime)
-          ? event.date as LunarDateTime
-          : event.date.toLunar,
+      date: event.date,
       title: event.title,
       description: event.description,
       location: event.location,
       mode: event.mode,
       priority: event.priority,
       repeat: LunarRepeat(
-        fromDate: event.repeat.fromDate is LunarDateTime
-            ? event.repeat.fromDate as LunarDateTime
-            : event.repeat.fromDate.toLunar,
-        toDate: event.repeat.toDate is LunarDateTime
-            ? event.repeat.toDate as LunarDateTime
-            : event.repeat.toDate.toLunar,
+        fromDate: event.repeat.fromDate,
+        toDate: event.repeat.toDate,
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
@@ -127,7 +130,6 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     );
   }
 
-  @override
   LunarEvent copyWith({
     LunarDateTime? date,
     String? title,
@@ -136,7 +138,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     String? location,
     String? id,
     EventPriority? priority,
-    BaseRepeat<DateTime>? repeat,
+    BaseRepeat<LunarDateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
     DateTime? createdDate,
@@ -291,5 +293,22 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   @override
   String toString() {
     return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date.toIso8601String(),
+      'title': title,
+      'description': description,
+      'mode': mode.name,
+      'location': location,
+      'id': id,
+      'priority': priority.name,
+      'repeat': repeat.toJson(),
+      'containTime': containTime,
+      'isEndOfMonth': isEndOfMonth,
+      'createdDate': createdDate.toIso8601String(),
+    };
   }
 }

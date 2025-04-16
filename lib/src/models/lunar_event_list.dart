@@ -3,16 +3,11 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
-class LunarEventList extends Equatable implements BaseEventList {
-  @override
-  final Map<LunarDateTime, List<LunarEvent>> events;
-
-  LunarEventList({
-    required this.events,
-  });
+class LunarEventList extends BaseEventList<LunarDateTime> with EquatableMixin {
+  LunarEventList({required super.events});
 
   @override
-  void add(LunarDateTime date, LunarEvent event) {
+  void add(LunarDateTime date, BaseEvent<LunarDateTime> event) {
     final eventsOfDate = events[date];
     if (eventsOfDate == null) {
       events[date] = [event];
@@ -22,7 +17,7 @@ class LunarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  void addAll(covariant LunarDateTime date, covariant List<LunarEvent> events) {
+  void addAll(LunarDateTime date, List<BaseEvent<LunarDateTime>> events) {
     final eventsOfDate = this.events[date];
     if (eventsOfDate == null) {
       this.events[date] = events;
@@ -32,13 +27,13 @@ class LunarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  bool remove(covariant LunarDateTime date, covariant LunarEvent event) {
+  bool remove(LunarDateTime date, BaseEvent<LunarDateTime> event) {
     final eventsOfDate = events[date];
     return eventsOfDate != null ? eventsOfDate.remove(event) : false;
   }
 
   @override
-  List<LunarEvent> removeAll(covariant LunarDateTime date) {
+  List<BaseEvent<LunarDateTime>> removeAll(LunarDateTime date) {
     return events.remove(date) ?? [];
   }
 
@@ -48,7 +43,7 @@ class LunarEventList extends Equatable implements BaseEventList {
   }
 
   @override
-  List<LunarEvent> getEvents(covariant LunarDateTime date) {
+  List<BaseEvent<LunarDateTime>> getEvents(LunarDateTime date) {
     return events[date] ?? [];
   }
 
@@ -76,9 +71,6 @@ class LunarEventList extends Equatable implements BaseEventList {
     });
     return events;
   }
-
-  @override
-  String toJson() => json.encode(toMap());
 
   factory LunarEventList.fromJson(String source) =>
       LunarEventList.fromMap(json.decode(source));
