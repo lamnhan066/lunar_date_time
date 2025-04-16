@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
-class SolarEventList extends BaseEventList<DateTime> with EquatableMixin {
-  SolarEventList({
-    required super.events,
-  });
+/// Lớp đại diện cho danh sách các sự kiện dựa trên SolarDateTime
+class SolarEventList extends BaseEventList<SolarDateTime> with EquatableMixin {
+  /// Khởi tạo danh sách sự kiện với các sự kiện được truyền vào
+  SolarEventList({required super.events});
 
+  /// Thêm một sự kiện vào danh sách tại một ngày cụ thể
   @override
-  void add(DateTime date, BaseEvent<DateTime> event) {
+  void add(SolarDateTime date, BaseEvent<SolarDateTime> event) {
     final eventsOfDate = events[date];
     if (eventsOfDate == null) {
       events[date] = [event];
@@ -18,8 +19,9 @@ class SolarEventList extends BaseEventList<DateTime> with EquatableMixin {
     }
   }
 
+  /// Thêm nhiều sự kiện vào danh sách tại một ngày cụ thể
   @override
-  void addAll(DateTime date, List<BaseEvent<DateTime>> events) {
+  void addAll(SolarDateTime date, List<BaseEvent<SolarDateTime>> events) {
     final eventsOfDate = this.events[date];
     if (eventsOfDate == null) {
       this.events[date] = events;
@@ -28,61 +30,73 @@ class SolarEventList extends BaseEventList<DateTime> with EquatableMixin {
     }
   }
 
+  /// Xóa một sự kiện khỏi danh sách tại một ngày cụ thể
   @override
-  bool remove(DateTime date, BaseEvent<DateTime> event) {
+  bool remove(SolarDateTime date, BaseEvent<SolarDateTime> event) {
     final eventsOfDate = events[date];
     return eventsOfDate != null ? eventsOfDate.remove(event) : false;
   }
 
+  /// Xóa tất cả các sự kiện tại một ngày cụ thể và trả về danh sách các sự kiện đã xóa
   @override
-  List<BaseEvent<DateTime>> removeAll(DateTime date) {
+  List<BaseEvent<SolarDateTime>> removeAll(SolarDateTime date) {
     return events.remove(date) ?? [];
   }
 
+  /// Xóa toàn bộ danh sách sự kiện
   @override
   void clear() {
     events.clear();
   }
 
+  /// Lấy danh sách các sự kiện tại một ngày cụ thể
   @override
-  List<BaseEvent<DateTime>> getEvents(DateTime date) {
+  List<BaseEvent<SolarDateTime>> getEvents(SolarDateTime date) {
     return events[date] ?? [];
   }
 
-  /// Map<DateTime in microsecondsSinceEpoch, List of Event>
+  /// Chuyển đổi danh sách sự kiện thành một Map
+  /// Map<SolarDateTime dưới dạng microsecondsSinceEpoch, Danh sách các sự kiện>
   @override
   Map<String, dynamic> toMap() {
     final Map<String, List<String>> map = {};
     events.forEach((key, value) {
-      map.addAll(
-          {key.toIso8601String(): value.map((e) => e.toJson()).toList()});
+      map.addAll({
+        key.toDateTime().toIso8601String():
+            value.map((e) => e.toJson()).toList()
+      });
     });
 
     return {'events': map};
   }
 
+  /// Tạo một SolarEventList từ một Map
   factory SolarEventList.fromMap(Map<String, dynamic> map) {
     final events = SolarEventList(events: {});
     final mapEvents = map['events'] as Map<String, dynamic>;
     mapEvents.forEach((key, value) {
-      var dateTime = DateTime.parse(key);
+      var solarDateTime = SolarDateTime.fromDateTime(DateTime.parse(key));
       events.addAll(
-        dateTime,
+        solarDateTime,
         (value as List).map((e) => SolarEvent.fromJson(e.toString())).toList(),
       );
     });
     return events;
   }
 
+  /// Chuyển đổi danh sách sự kiện thành chuỗi JSON
   @override
   String toJson() => json.encode(toMap());
 
+  /// Tạo một SolarEventList từ chuỗi JSON
   factory SolarEventList.fromJson(String source) =>
       SolarEventList.fromMap(json.decode(source));
 
+  /// Trả về chuỗi mô tả của SolarEventList
   @override
   String toString() => 'LunarEventList(events: $events)';
 
+  /// Danh sách các thuộc tính để so sánh trong Equatable
   @override
   List<Object> get props => [events];
 }

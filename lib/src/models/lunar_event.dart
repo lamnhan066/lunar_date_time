@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:lunar_date_time/lunar_date_time.dart';
 
+/// Lớp đại diện cho việc lặp lại sự kiện theo lịch âm.
 class LunarRepeat extends BaseRepeat<LunarDateTime> {
+  /// Tạo một đối tượng LunarRepeat.
   const LunarRepeat({
     required super.fromDate,
     required super.toDate,
@@ -10,6 +12,7 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     required super.every,
   });
 
+  /// Tạo một bản sao của LunarRepeat với các giá trị được thay đổi.
   LunarRepeat copyWith({
     LunarDateTime? fromDate,
     LunarDateTime? toDate,
@@ -24,10 +27,12 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     );
   }
 
+  /// Tạo một LunarRepeat không lặp lại.
   factory LunarRepeat.no() {
     return LunarRepeat.every(RepeatFrequency.no);
   }
 
+  /// Tạo một LunarRepeat lặp lại với tần suất cụ thể.
   factory LunarRepeat.every(RepeatFrequency frequency) {
     return LunarRepeat(
       fromDate: LunarDateTime(1900),
@@ -37,33 +42,36 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     );
   }
 
+  /// Tạo một LunarRepeat lặp lại hàng năm.
   factory LunarRepeat.yearly() {
     return LunarRepeat.every(RepeatFrequency.yearly);
   }
 
+  /// Tạo một LunarRepeat lặp lại hàng tháng.
   factory LunarRepeat.monthly() {
     return LunarRepeat.every(RepeatFrequency.monthly);
   }
 
+  /// Tạo một LunarRepeat lặp lại hàng tuần.
   factory LunarRepeat.weekly() {
     return LunarRepeat.every(RepeatFrequency.weekly);
   }
 
+  /// Tạo một LunarRepeat lặp lại hàng ngày.
   factory LunarRepeat.daily() {
     return LunarRepeat.every(RepeatFrequency.daily);
   }
 
-  // factory LunarRepeat.hourly() {
-  //   return LunarRepeat.every(RepeatFrequency.hourly);
-  // }
-
+  /// Tạo một LunarRepeat từ một Map.
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = map['fromDate'] is int
-        ? LunarDateTime.fromMillisecondsSinceEpoch(map['fromDate'])
-        : LunarDateTime.parse(map['fromDate']);
+        ? LunarDateTime.fromDateTime(
+            DateTime.fromMillisecondsSinceEpoch(map['fromDate']))
+        : LunarDateTime.fromDateTime(DateTime.parse(map['fromDate']));
     final toDate = map['toDate'] is int
-        ? LunarDateTime.fromMillisecondsSinceEpoch(map['toDate'])
-        : LunarDateTime.parse(map['toDate']);
+        ? LunarDateTime.fromDateTime(
+            DateTime.fromMillisecondsSinceEpoch(map['toDate']))
+        : LunarDateTime.fromDateTime(DateTime.parse(map['toDate']));
     return LunarRepeat(
       fromDate: fromDate,
       toDate: toDate,
@@ -72,26 +80,31 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
     );
   }
 
+  /// Tạo một LunarRepeat từ một chuỗi JSON.
   factory LunarRepeat.fromJson(String source) =>
       LunarRepeat.fromMap(json.decode(source));
 
+  /// Chuyển đổi đối tượng LunarRepeat thành chuỗi.
   @override
   String toString() {
     return 'LunarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
   }
 
+  /// Chuyển đổi đối tượng LunarRepeat thành Map.
   @override
   Map<String, dynamic> toMap() {
     return {
-      'fromDate': fromDate.toIso8601String(),
-      'toDate': toDate.toIso8601String(),
+      'fromDate': fromDate.toDateTime().toIso8601String(),
+      'toDate': toDate.toDateTime().toIso8601String(),
       'frequency': frequency.name,
       'every': every,
     };
   }
 }
 
+/// Lớp đại diện cho sự kiện theo lịch âm.
 class LunarEvent extends BaseEvent<LunarDateTime> {
+  /// Tạo một đối tượng LunarEvent.
   LunarEvent({
     super.id = '',
     required super.date,
@@ -109,6 +122,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
           createdDate: createdDate ?? DateTime.now(),
         );
 
+  /// Tạo một LunarEvent từ một BaseEvent.
   factory LunarEvent.fromBaseEvent(BaseEvent<LunarDateTime> event) {
     return LunarEvent(
       id: event.id,
@@ -130,6 +144,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     );
   }
 
+  /// Tạo một bản sao của LunarEvent với các giá trị được thay đổi.
   LunarEvent copyWith({
     LunarDateTime? date,
     String? title,
@@ -158,11 +173,10 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     );
   }
 
-  /// Kiểm tra xem event này có phù hợp với `date` không.
+  /// Kiểm tra xem sự kiện này có phù hợp với ngày `date` không.
   bool checkDate(LunarDateTime date) {
     return switch (repeat.frequency) {
       RepeatFrequency.no => _checkNo(date),
-      // RepeatFrequency.hourly => checkHourly(date),
       RepeatFrequency.daily => _checkDaily(date),
       RepeatFrequency.weekly => _checkWeekly(date),
       RepeatFrequency.monthly => _checkMonthly(date),
@@ -170,6 +184,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     };
   }
 
+  /// Kiểm tra sự kiện không lặp lại.
   bool _checkNo(LunarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
@@ -179,11 +194,15 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
+  /// Kiểm tra sự kiện lặp lại hàng ngày.
   bool _checkDaily(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
+    final thisDT = this.date.toDateTime();
+    final dateDT = date.toDateTime();
+
     final everyInMilliseconds =
-        date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
+        dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
     final every = Duration(milliseconds: everyInMilliseconds).inDays;
     if (every % repeat.every == 0) {
       return true;
@@ -192,12 +211,16 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
+  /// Kiểm tra sự kiện lặp lại hàng tuần.
   bool _checkWeekly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
-    if (this.date.weekday == date.weekday) {
+    final thisDT = this.date.toDateTime();
+    final dateDT = date.toDateTime();
+
+    if (thisDT.weekday == dateDT.weekday) {
       final everyInMilliseconds =
-          date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
+          dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
       final every = Duration(milliseconds: everyInMilliseconds).inDays;
       if (every % (repeat.every * 7) == 0) {
         return true;
@@ -206,11 +229,13 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
+  /// Kiểm tra sự kiện lặp lại hàng tháng.
   bool _checkMonthly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     if (isEndOfMonth) {
-      final tomorrow = date.add(Duration(days: 1));
+      final tomorrow =
+          LunarDateTime.fromDateTime(date.toDateTime().add(Duration(days: 1)));
       if (tomorrow.day == 1) {
         final every = date.month - this.date.month;
         if (every % repeat.every == 0) {
@@ -226,12 +251,14 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
+  /// Kiểm tra sự kiện lặp lại hàng năm.
   bool _checkYearly(LunarDateTime date) {
     if (!isValidDateInRange(date)) return false;
 
     if (this.date.month == date.month) {
       if (isEndOfMonth) {
-        final tomorrow = date.add(Duration(days: 1));
+        final tomorrow = LunarDateTime.fromDateTime(
+            date.toDateTime().add(Duration(days: 1)));
         if (tomorrow.day == 1) {
           final every = date.year - this.date.year;
           if (every % repeat.every == 0) {
@@ -248,8 +275,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     return false;
   }
 
-  /// Currently do not use `repeat.fromDate` to compare because we assume that the
-  /// from date is the date that the user first set.
+  /// Kiểm tra xem ngày có nằm trong phạm vi hợp lệ không.
   bool isValidDateInRange(LunarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
@@ -261,14 +287,19 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
         repeat.toDate.year == date.year) {
       return true;
     }
-    return date.isAfter(this.date) && date.isBefore(repeat.toDate);
+
+    final dateDT = date.toDateTime();
+    return dateDT.isAfter(date.toDateTime()) &&
+        dateDT.isBefore(repeat.toDate.toDateTime());
   }
 
+  /// Tạo một LunarEvent từ một Map.
   factory LunarEvent.fromMap(Map map) {
     return LunarEvent(
       date: map['date'] is int
-          ? LunarDateTime.fromMillisecondsSinceEpoch(map['date'])
-          : LunarDateTime.parse(map['date']),
+          ? LunarDateTime.fromDateTime(
+              DateTime.fromMillisecondsSinceEpoch(map['date']))
+          : LunarDateTime.fromDateTime(DateTime.parse(map['date'])),
       title: map['title'],
       description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),
@@ -287,18 +318,21 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     );
   }
 
+  /// Tạo một LunarEvent từ một chuỗi JSON.
   factory LunarEvent.fromJson(String source) =>
       LunarEvent.fromMap(json.decode(source));
 
+  /// Chuyển đổi đối tượng LunarEvent thành chuỗi.
   @override
   String toString() {
     return 'LunarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
   }
 
+  /// Chuyển đổi đối tượng LunarEvent thành Map.
   @override
   Map<String, dynamic> toMap() {
     return {
-      'date': date.toIso8601String(),
+      'date': date.toDateTime().toIso8601String(),
       'title': title,
       'description': description,
       'mode': mode.name,

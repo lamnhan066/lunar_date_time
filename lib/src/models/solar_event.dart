@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:lunar_date_time/src/models/base_event.dart';
+import 'package:lunar_date_time/lunar_date_time.dart';
 
-import 'enums.dart';
-
-class SolarRepeat extends BaseRepeat<DateTime> {
+/// Lớp đại diện cho việc lặp lại sự kiện theo lịch dương.
+class SolarRepeat extends BaseRepeat<SolarDateTime> {
+  /// Khởi tạo một đối tượng SolarRepeat.
   const SolarRepeat({
     required super.fromDate,
     required super.toDate,
@@ -12,9 +12,10 @@ class SolarRepeat extends BaseRepeat<DateTime> {
     required super.every,
   });
 
+  /// Tạo một bản sao của SolarRepeat với các giá trị mới.
   SolarRepeat copyWith({
-    DateTime? fromDate,
-    DateTime? toDate,
+    SolarDateTime? fromDate,
+    SolarDateTime? toDate,
     RepeatFrequency? frequency,
     int? every,
   }) {
@@ -26,39 +27,42 @@ class SolarRepeat extends BaseRepeat<DateTime> {
     );
   }
 
+  /// Tạo một SolarRepeat không lặp lại.
   factory SolarRepeat.no() {
     return SolarRepeat.every(RepeatFrequency.no);
   }
 
+  /// Tạo một SolarRepeat với tần suất lặp lại cụ thể.
   factory SolarRepeat.every(RepeatFrequency frequency) {
     return SolarRepeat(
-      fromDate: DateTime(1900),
-      toDate: DateTime(3000),
+      fromDate: SolarDateTime(1900),
+      toDate: SolarDateTime(3000),
       frequency: frequency,
       every: 1,
     );
   }
 
+  /// Tạo một SolarRepeat lặp lại hàng năm.
   factory SolarRepeat.yearly() {
     return SolarRepeat.every(RepeatFrequency.yearly);
   }
 
+  /// Tạo một SolarRepeat lặp lại hàng tháng.
   factory SolarRepeat.monthly() {
     return SolarRepeat.every(RepeatFrequency.monthly);
   }
 
+  /// Tạo một SolarRepeat lặp lại hàng tuần.
   factory SolarRepeat.weekly() {
     return SolarRepeat.every(RepeatFrequency.weekly);
   }
 
+  /// Tạo một SolarRepeat lặp lại hàng ngày.
   factory SolarRepeat.daily() {
     return SolarRepeat.every(RepeatFrequency.daily);
   }
 
-  // factory SolarRepeat.hourly() {
-  //   return SolarRepeat.every(RepeatFrequency.hourly);
-  // }
-
+  /// Tạo một SolarRepeat từ một Map.
   factory SolarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = map['fromDate'] is int
         ? DateTime.fromMillisecondsSinceEpoch(map['fromDate'])
@@ -67,36 +71,42 @@ class SolarRepeat extends BaseRepeat<DateTime> {
         ? DateTime.fromMillisecondsSinceEpoch(map['toDate'])
         : DateTime.parse(map['toDate']);
     return SolarRepeat(
-      fromDate: fromDate,
-      toDate: toDate,
+      fromDate: fromDate.toSolar(),
+      toDate: toDate.toSolar(),
       frequency: RepeatFrequency.values.byName(map['frequency']),
       every: map['every']?.toInt() ?? 0,
     );
   }
 
+  /// Tạo một SolarRepeat từ một chuỗi JSON.
   factory SolarRepeat.fromJson(String source) =>
       SolarRepeat.fromMap(json.decode(source));
 
+  /// Trả về chuỗi mô tả đối tượng SolarRepeat.
   @override
   String toString() {
     return 'SolarRepeat(fromDate: $fromDate, toDate: $toDate, frequency: $frequency, every: $every)';
   }
 
+  /// Các thuộc tính để so sánh đối tượng.
   @override
   List<Object> get props => [fromDate, toDate, frequency, every];
 
+  /// Chuyển đổi đối tượng SolarRepeat thành Map.
   @override
   Map<String, dynamic> toMap() {
     return {
-      'fromDate': fromDate.toIso8601String(),
-      'toDate': toDate.toIso8601String(),
+      'fromDate': fromDate.toDateTime().toIso8601String(),
+      'toDate': toDate.toDateTime().toIso8601String(),
       'frequency': frequency.name,
       'every': every,
     };
   }
 }
 
-class SolarEvent extends BaseEvent<DateTime> {
+/// Lớp đại diện cho một sự kiện theo lịch dương.
+class SolarEvent extends BaseEvent<SolarDateTime> {
+  /// Khởi tạo một đối tượng SolarEvent.
   SolarEvent({
     super.id = '',
     required super.date,
@@ -114,7 +124,8 @@ class SolarEvent extends BaseEvent<DateTime> {
           createdDate: createdDate ?? DateTime.now(),
         );
 
-  factory SolarEvent.fromBaseEvent(BaseEvent<DateTime> event) {
+  /// Tạo một SolarEvent từ một BaseEvent.
+  factory SolarEvent.fromBaseEvent(BaseEvent<SolarDateTime> event) {
     return SolarEvent(
       id: event.id,
       date: event.date,
@@ -135,15 +146,16 @@ class SolarEvent extends BaseEvent<DateTime> {
     );
   }
 
+  /// Tạo một bản sao của SolarEvent với các giá trị mới.
   SolarEvent copyWith({
-    DateTime? date,
+    SolarDateTime? date,
     String? title,
     String? description,
     EventMode? mode,
     String? location,
     String? id,
     EventPriority? priority,
-    BaseRepeat<DateTime>? repeat,
+    BaseRepeat<SolarDateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
     DateTime? createdDate,
@@ -163,11 +175,10 @@ class SolarEvent extends BaseEvent<DateTime> {
     );
   }
 
-  /// Kiểm tra xem event này có phù hợp với `date` không.
-  bool checkDate(DateTime date) {
+  /// Kiểm tra xem sự kiện này có phù hợp với ngày `date` không.
+  bool checkDate(SolarDateTime date) {
     return switch (repeat.frequency) {
       RepeatFrequency.no => _checkNo(date),
-      // RepeatFrequency.hourly => _checkHourly(date),
       RepeatFrequency.daily => _checkDaily(date),
       RepeatFrequency.weekly => _checkWeekly(date),
       RepeatFrequency.monthly => _checkMonthly(date),
@@ -175,7 +186,8 @@ class SolarEvent extends BaseEvent<DateTime> {
     };
   }
 
-  bool _checkNo(DateTime date) {
+  /// Kiểm tra sự kiện không lặp lại.
+  bool _checkNo(SolarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
         this.date.year == date.year) {
@@ -184,11 +196,12 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  bool _checkDaily(DateTime date) {
+  /// Kiểm tra sự kiện lặp lại hàng ngày.
+  bool _checkDaily(SolarDateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
-    final everyInMilliseconds =
-        date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
+    final everyInMilliseconds = date.toDateTime().millisecondsSinceEpoch -
+        this.date.toDateTime().millisecondsSinceEpoch;
     final every = Duration(milliseconds: everyInMilliseconds).inDays;
     if (every % repeat.every == 0) {
       return true;
@@ -197,12 +210,13 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  bool _checkWeekly(DateTime date) {
+  /// Kiểm tra sự kiện lặp lại hàng tuần.
+  bool _checkWeekly(SolarDateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
     if (this.date.weekday == date.weekday) {
-      final everyInMilliseconds =
-          date.millisecondsSinceEpoch - this.date.millisecondsSinceEpoch;
+      final everyInMilliseconds = date.toDateTime().millisecondsSinceEpoch -
+          this.date.toDateTime().millisecondsSinceEpoch;
       final every = Duration(milliseconds: everyInMilliseconds).inDays;
       if (every % (repeat.every * 7) == 0) {
         return true;
@@ -211,11 +225,12 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  bool _checkMonthly(DateTime date) {
+  /// Kiểm tra sự kiện lặp lại hàng tháng.
+  bool _checkMonthly(SolarDateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
     if (isEndOfMonth) {
-      final tomorrow = date.add(Duration(days: 1));
+      final tomorrow = date.toDateTime().add(Duration(days: 1)).toSolar();
       if (tomorrow.day == 1) {
         final every = date.month - this.date.month;
         if (every % repeat.every == 0) {
@@ -231,12 +246,13 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  bool _checkYearly(DateTime date) {
+  /// Kiểm tra sự kiện lặp lại hàng năm.
+  bool _checkYearly(SolarDateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
     if (this.date.month == date.month) {
       if (isEndOfMonth) {
-        final tomorrow = date.add(Duration(days: 1));
+        final tomorrow = date.toDateTime().add(Duration(days: 1)).toSolar();
         if (tomorrow.day == 1) {
           final every = date.year - this.date.year;
           if (every % repeat.every == 0) {
@@ -253,9 +269,8 @@ class SolarEvent extends BaseEvent<DateTime> {
     return false;
   }
 
-  /// Currently do not use `repeat.fromDate` to compare because we assume that the
-  /// from date is the date that the user first set.
-  bool _isValidDateInRange(DateTime date) {
+  /// Kiểm tra xem ngày có nằm trong phạm vi hợp lệ không.
+  bool _isValidDateInRange(SolarDateTime date) {
     if (this.date.day == date.day &&
         this.date.month == date.month &&
         this.date.year == date.year) {
@@ -266,14 +281,18 @@ class SolarEvent extends BaseEvent<DateTime> {
         repeat.toDate.year == date.year) {
       return true;
     }
-    return date.isAfter(this.date) && date.isBefore(repeat.toDate);
+    final dateDT = date.toDateTime();
+    return dateDT.isAfter(this.date.toDateTime()) &&
+        dateDT.isBefore(repeat.toDate.toDateTime());
   }
 
+  /// Tạo một SolarEvent từ một Map.
   factory SolarEvent.fromMap(Map map) {
     return SolarEvent(
-      date: map['date'] is int
-          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
-          : DateTime.parse(map['date']),
+      date: (map['date'] is int
+              ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+              : DateTime.parse(map['date']))
+          .toSolar(),
       title: map['title'],
       description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),
@@ -292,18 +311,21 @@ class SolarEvent extends BaseEvent<DateTime> {
     );
   }
 
+  /// Tạo một SolarEvent từ một chuỗi JSON.
   factory SolarEvent.fromJson(String source) =>
       SolarEvent.fromMap(json.decode(source));
 
+  /// Trả về chuỗi mô tả đối tượng SolarEvent.
   @override
   String toString() {
     return 'SolarEvent(date: $date, title: $title, description: $description, mode: $mode location: $location, id: $id, priority: $priority, repeat: $repeat, containTime: $containTime, isEndOfMonth: $isEndOfMonth, createdDate: $createdDate)';
   }
 
+  /// Chuyển đổi đối tượng SolarEvent thành Map.
   @override
   Map<String, dynamic> toMap() {
     return {
-      'date': date.toIso8601String(),
+      'date': date.toDateTime().toIso8601String(),
       'title': title,
       'description': description,
       'mode': mode.name,
