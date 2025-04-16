@@ -307,13 +307,18 @@ class LunarDateTime extends DateTime {
   }
 
   @override
+  @Deprecated(
+      'LunarDateTime does not support local conversion. Use toDateTime() instead.')
   DateTime toLocal() {
-    return toDateTime();
+    throw UnimplementedError(
+        'LunarDateTime does not support local conversion.');
   }
 
   @override
+  @Deprecated(
+      'LunarDateTime does not support UTC conversion. Use toDateTime() instead.')
   DateTime toUtc() {
-    return toDateTime().toUtc();
+    throw UnimplementedError('LunarDateTime does not support UTC conversion.');
   }
 
   @override
@@ -328,7 +333,9 @@ class LunarDateTime extends DateTime {
         other.day == day &&
         other.hour == hour &&
         other.minute == minute &&
-        other.second == second;
+        other.second == second &&
+        other.millisecond == millisecond &&
+        other.microsecond == microsecond;
   }
 
   @override
@@ -340,6 +347,8 @@ class LunarDateTime extends DateTime {
         hour,
         minute,
         second,
+        millisecond,
+        microsecond,
       );
 
   @override
