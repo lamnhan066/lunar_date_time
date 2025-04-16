@@ -68,7 +68,7 @@ class LunarDateTime extends DateTime {
   /// Tạo một đối tượng [LunarDateTime] từ một đối tượng [DateTime].
   factory LunarDateTime.fromDateTime(DateTime dateTime) {
     // Adjust the DateTime to the fixed +7 timezone.
-    final adjustedDateTime = dateTime.toUtc().add(_fixedTimeZoneOffset);
+    final adjustedDateTime = dateTime.add(_fixedTimeZoneOffset);
 
     final lunarDate = convertSolar2Lunar(
       adjustedDateTime.day,
