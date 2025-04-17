@@ -222,11 +222,14 @@ class SolarEvent extends BaseEvent<SolarDateTime> {
   bool _checkWeekly(SolarDateTime date) {
     if (!_isValidDateInRange(date)) return false;
 
-    if (this.date.weekday == date.weekday) {
-      final everyInMilliseconds = date.toDateTime().millisecondsSinceEpoch -
-          this.date.toDateTime().millisecondsSinceEpoch;
-      final every = Duration(milliseconds: everyInMilliseconds).inDays;
-      if (every % (repeat.every * 7) == 0) {
+    final thisDT = this.date.toDateTime();
+    final dateDT = date.toDateTime();
+
+    if (thisDT.weekday == dateDT.weekday) {
+      final everyInMilliseconds =
+          dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
+      final every = Duration(milliseconds: everyInMilliseconds).inDays ~/ 7;
+      if (every % repeat.every == 0) {
         return true;
       }
     }
