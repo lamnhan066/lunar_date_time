@@ -31,4 +31,15 @@ abstract class BaseDateTime {
 
   /// Chuyển đổi đối tượng BaseDateTime thành đối tượng DateTime.
   DateTime toDateTime();
+
+  BaseDateTime copyWith({
+    int? year,
+    int? month,
+    int? day,
+    int? hour,
+    int? minute,
+    int? second,
+    int? millisecond,
+    int? microsecond,
+  });
 }
