@@ -32,6 +32,9 @@ abstract class BaseDateTime {
   /// Chuyển đổi đối tượng BaseDateTime thành đối tượng DateTime.
   DateTime toDateTime();
 
+  /// Chuyển đổi đối tượng BaseDateTime thành đối tượng DateTime UTC.
+  DateTime toUtc();
+
   BaseDateTime copyWith({
     int? year,
     int? month,

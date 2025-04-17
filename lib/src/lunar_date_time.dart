@@ -157,6 +157,7 @@ class LunarDateTime extends BaseDateTime {
   }
 
   /// Tạo một bản sao của [LunarDateTime] với các giá trị được thay đổi.
+  @override
   LunarDateTime copyWith({
     int? year,
     int? month,
@@ -249,6 +250,11 @@ class LunarDateTime extends BaseDateTime {
   @override
   DateTime toDateTime() {
     return _solarDateTime.toDateTime();
+  }
+
+  @override
+  DateTime toUtc() {
+    return _solarDateTime.toUtc();
   }
 
   @override
