@@ -13,6 +13,7 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   });
 
   /// Tạo một bản sao của LunarRepeat với các giá trị được thay đổi.
+  @override
   LunarRepeat copyWith({
     LunarDateTime? fromDate,
     LunarDateTime? toDate,
@@ -123,18 +124,26 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
         );
 
   /// Tạo một LunarEvent từ một BaseEvent.
-  factory LunarEvent.fromBaseEvent(BaseEvent<LunarDateTime> event) {
+  static LunarEvent fromBaseEvent<T extends BaseDateTime>(
+    BaseEvent<T> event,
+  ) {
     return LunarEvent(
       id: event.id,
-      date: event.date,
+      date: event.date is LunarDateTime
+          ? event.date as LunarDateTime
+          : event.date.toUtc().toLunar(),
       title: event.title,
       description: event.description,
       location: event.location,
       mode: event.mode,
       priority: event.priority,
       repeat: LunarRepeat(
-        fromDate: event.repeat.fromDate,
-        toDate: event.repeat.toDate,
+        fromDate: event.repeat.fromDate is LunarDateTime
+            ? event.repeat.fromDate as LunarDateTime
+            : event.repeat.fromDate.toUtc().toLunar(),
+        toDate: event.repeat.toDate is LunarDateTime
+            ? event.repeat.toDate as LunarDateTime
+            : event.repeat.toDate.toUtc().toLunar(),
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
@@ -145,6 +154,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
   }
 
   /// Tạo một bản sao của LunarEvent với các giá trị được thay đổi.
+  @override
   LunarEvent copyWith({
     LunarDateTime? date,
     String? title,
@@ -221,8 +231,8 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     if (thisDT.weekday == dateDT.weekday) {
       final everyInMilliseconds =
           dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
-      final every = Duration(milliseconds: everyInMilliseconds).inDays;
-      if (every % (repeat.every * 7) == 0) {
+      final every = Duration(milliseconds: everyInMilliseconds).inDays ~/ 7;
+      if (every % repeat.every == 0) {
         return true;
       }
     }
@@ -289,7 +299,7 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
     }
 
     final dateDT = date.toDateTime();
-    return dateDT.isAfter(date.toDateTime()) &&
+    return dateDT.isAfter(this.date.toDateTime()) &&
         dateDT.isBefore(repeat.toDate.toDateTime());
   }
 

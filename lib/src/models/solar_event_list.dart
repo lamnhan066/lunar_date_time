@@ -93,5 +93,5 @@ class SolarEventList extends BaseEventList<SolarDateTime> {
 
   /// Trả về chuỗi mô tả của SolarEventList
   @override
-  String toString() => 'LunarEventList(events: $events)';
+  String toString() => 'SolarEventList(events: $events)';
 }

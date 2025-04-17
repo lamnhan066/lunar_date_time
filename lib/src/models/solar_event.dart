@@ -13,6 +13,7 @@ class SolarRepeat extends BaseRepeat<SolarDateTime> {
   });
 
   /// Tạo một bản sao của SolarRepeat với các giá trị mới.
+  @override
   SolarRepeat copyWith({
     SolarDateTime? fromDate,
     SolarDateTime? toDate,
@@ -125,18 +126,24 @@ class SolarEvent extends BaseEvent<SolarDateTime> {
         );
 
   /// Tạo một SolarEvent từ một BaseEvent.
-  factory SolarEvent.fromBaseEvent(BaseEvent<SolarDateTime> event) {
+  static SolarEvent fromBaseEvent<T extends BaseDateTime>(BaseEvent<T> event) {
     return SolarEvent(
       id: event.id,
-      date: event.date,
+      date: event.date is SolarDateTime
+          ? event.date as SolarDateTime
+          : event.date.toUtc().toSolar(),
       title: event.title,
       description: event.description,
       location: event.location,
       mode: event.mode,
       priority: event.priority,
       repeat: SolarRepeat(
-        fromDate: event.repeat.fromDate,
-        toDate: event.repeat.toDate,
+        fromDate: event.repeat.fromDate is SolarDateTime
+            ? event.repeat.fromDate as SolarDateTime
+            : event.repeat.fromDate.toUtc().toSolar(),
+        toDate: event.repeat.toDate is SolarDateTime
+            ? event.repeat.toDate as SolarDateTime
+            : event.repeat.toDate.toUtc().toSolar(),
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
@@ -147,6 +154,7 @@ class SolarEvent extends BaseEvent<SolarDateTime> {
   }
 
   /// Tạo một bản sao của SolarEvent với các giá trị mới.
+  @override
   SolarEvent copyWith({
     SolarDateTime? date,
     String? title,
