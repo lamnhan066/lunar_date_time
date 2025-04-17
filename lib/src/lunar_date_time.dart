@@ -4,32 +4,29 @@ import 'package:lunar_date_time/src/can_chi.dart';
 import 'package:lunar_date_time/src/converter.dart';
 import 'package:lunar_date_time/src/events/lunar_events.dart';
 import 'package:lunar_date_time/src/events/solar_events.dart';
-import 'package:lunar_date_time/src/models/base_date_time.dart';
 
 class LunarDateTime extends BaseDateTime {
   /// Danh sách các ngày lễ âm lịch, được lưu trữ để tránh tính toán lại.
   static final LunarEventList _lunarEvents = getLunarEvents;
-  static final List<BaseEvent<LunarDateTime>> _lunarEventsAsList =
-      _lunarEvents.events.values.expand((e) => e).toList();
+  static final List<LunarEvent> _lunarEventsAsList =
+      List<LunarEvent>.from(_lunarEvents.events.values.expand((e) => e));
 
   /// Danh sách các ngày lễ dương lịch, được lưu trữ để tránh tính toán lại.
   static final SolarEventList _solarEvents = getSolarEvents;
-  static final List<BaseEvent<SolarDateTime>> _solarEventsAsList =
-      _solarEvents.events.values.expand((e) => e).toList();
+  static final List<SolarEvent> _solarEventsAsList =
+      List<SolarEvent>.from(_solarEvents.events.values.expand((e) => e));
 
   /// Trả về danh sách các ngày lễ âm lịch.
   static LunarEventList get lunarEvents => _lunarEvents;
 
   /// Trả về danh sách các ngày lễ âm lịch dưới dạng một danh sách phẳng.
-  static List<BaseEvent<LunarDateTime>> get lunarEventsAsList =>
-      _lunarEventsAsList;
+  static List<LunarEvent> get lunarEventsAsList => _lunarEventsAsList;
 
   /// Trả về danh sách các ngày lễ dương lịch.
   static SolarEventList get solarEvents => _solarEvents;
 
   /// Trả về danh sách các ngày lễ dương lịch dưới dạng một danh sách phẳng.
-  static List<BaseEvent<SolarDateTime>> get solarEventsAsList =>
-      _solarEventsAsList;
+  static List<SolarEvent> get solarEventsAsList => _solarEventsAsList;
 
   /// Kiểm tra xem một tháng cụ thể trong năm có phải là tháng nhuận hay không.
   static bool checkLeapMonth(int year, int month) {
@@ -159,7 +156,7 @@ class LunarDateTime extends BaseDateTime {
     );
   }
 
-  /// Tạo một bản sao của LunarDateTime với các giá trị được thay đổi.
+  /// Tạo một bản sao của [LunarDateTime] với các giá trị được thay đổi.
   LunarDateTime copyWith({
     int? year,
     int? month,

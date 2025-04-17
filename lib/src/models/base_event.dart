@@ -2,9 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
-import 'package:lunar_date_time/src/models/base_date_time.dart';
 
-/// Lớp trừu tượng đại diện cho một sự kiện cơ bản.
+/// Lớp đại diện cho một sự kiện cơ bản.
 /// [D] là kiểu dữ liệu mở rộng từ `BaseDateTime`.
 abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
   /// Ngày của sự kiện.
@@ -81,7 +80,7 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
   }
 }
 
-/// Lớp trừu tượng đại diện cho thông tin lặp lại của một sự kiện.
+/// Lớp đại diện cho thông tin lặp lại của một sự kiện.
 /// [D] là kiểu dữ liệu mở rộng từ `BaseDateTime`.
 abstract class BaseRepeat<D extends BaseDateTime> extends Equatable {
   /// Ngày bắt đầu của chu kỳ lặp.
