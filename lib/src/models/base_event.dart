@@ -54,6 +54,21 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
     required this.createdDate,
   });
 
+  /// Hàm sao chép sự kiện với các thuộc tính mới.
+  BaseEvent<D> copyWith({
+    D? date,
+    String? title,
+    String? description,
+    String? location,
+    String? id,
+    EventPriority? priority,
+    BaseRepeat<D>? repeat,
+    EventMode? mode,
+    bool? containTime,
+    bool? isEndOfMonth,
+    DateTime? createdDate,
+  });
+
   /// Chuyển đổi sự kiện sang định dạng JSON.
   String toJson() => jsonEncode(toMap());
 
@@ -101,6 +116,13 @@ abstract class BaseRepeat<D extends BaseDateTime> extends Equatable {
     required this.toDate,
     required this.frequency,
     required this.every,
+  });
+
+  BaseRepeat<D> copyWith({
+    D? fromDate,
+    D? toDate,
+    RepeatFrequency? frequency,
+    int? every,
   });
 
   /// Chuyển đổi thông tin lặp lại sang định dạng JSON.
