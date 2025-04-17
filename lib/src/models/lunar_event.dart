@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:lunar_date_time/src/models/check_date_mixin.dart';
 
 /// Lớp đại diện cho việc lặp lại sự kiện theo lịch âm.
 class LunarRepeat extends BaseRepeat<LunarDateTime> {
@@ -104,7 +105,8 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
 }
 
 /// Lớp đại diện cho sự kiện theo lịch âm.
-class LunarEvent extends BaseEvent<LunarDateTime> {
+class LunarEvent extends BaseEvent<LunarDateTime>
+    with CheckDateMixin<LunarDateTime> {
   /// Tạo một đối tượng LunarEvent.
   LunarEvent({
     super.id = '',
@@ -181,126 +183,6 @@ class LunarEvent extends BaseEvent<LunarDateTime> {
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
       createdDate: createdDate ?? this.createdDate,
     );
-  }
-
-  /// Kiểm tra xem sự kiện này có phù hợp với ngày `date` không.
-  bool checkDate(LunarDateTime date) {
-    return switch (repeat.frequency) {
-      RepeatFrequency.no => _checkNo(date),
-      RepeatFrequency.daily => _checkDaily(date),
-      RepeatFrequency.weekly => _checkWeekly(date),
-      RepeatFrequency.monthly => _checkMonthly(date),
-      RepeatFrequency.yearly => _checkYearly(date),
-    };
-  }
-
-  /// Kiểm tra sự kiện không lặp lại.
-  bool _checkNo(LunarDateTime date) {
-    if (this.date.day == date.day &&
-        this.date.month == date.month &&
-        this.date.year == date.year) {
-      return true;
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng ngày.
-  bool _checkDaily(LunarDateTime date) {
-    if (!isValidDateInRange(date)) return false;
-
-    final thisDT = this.date.toDateTime();
-    final dateDT = date.toDateTime();
-
-    final everyInMilliseconds =
-        dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
-    final every = Duration(milliseconds: everyInMilliseconds).inDays;
-    if (every % repeat.every == 0) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng tuần.
-  bool _checkWeekly(LunarDateTime date) {
-    if (!isValidDateInRange(date)) return false;
-
-    final thisDT = this.date.toDateTime();
-    final dateDT = date.toDateTime();
-
-    if (thisDT.weekday == dateDT.weekday) {
-      final everyInMilliseconds =
-          dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
-      final every = Duration(milliseconds: everyInMilliseconds).inDays ~/ 7;
-      if (every % repeat.every == 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng tháng.
-  bool _checkMonthly(LunarDateTime date) {
-    if (!isValidDateInRange(date)) return false;
-
-    if (isEndOfMonth) {
-      final tomorrow =
-          LunarDateTime.fromDateTime(date.toDateTime().add(Duration(days: 1)));
-      if (tomorrow.day == 1) {
-        final every = date.month - this.date.month;
-        if (every % repeat.every == 0) {
-          return true;
-        }
-      }
-    } else if (this.date.day == date.day) {
-      final every = date.month - this.date.month;
-      if (every % repeat.every == 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng năm.
-  bool _checkYearly(LunarDateTime date) {
-    if (!isValidDateInRange(date)) return false;
-
-    if (this.date.month == date.month) {
-      if (isEndOfMonth) {
-        final tomorrow = LunarDateTime.fromDateTime(
-            date.toDateTime().add(Duration(days: 1)));
-        if (tomorrow.day == 1) {
-          final every = date.year - this.date.year;
-          if (every % repeat.every == 0) {
-            return true;
-          }
-        }
-      } else if (this.date.day == date.day) {
-        final every = date.year - this.date.year;
-        if (every % repeat.every == 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra xem ngày có nằm trong phạm vi hợp lệ không.
-  bool isValidDateInRange(LunarDateTime date) {
-    if (this.date.day == date.day &&
-        this.date.month == date.month &&
-        this.date.year == date.year) {
-      return true;
-    }
-    if (repeat.toDate.day == date.day &&
-        repeat.toDate.month == date.month &&
-        repeat.toDate.year == date.year) {
-      return true;
-    }
-
-    final dateDT = date.toDateTime();
-    return dateDT.isAfter(this.date.toDateTime()) &&
-        dateDT.isBefore(repeat.toDate.toDateTime());
   }
 
   /// Tạo một LunarEvent từ một Map.

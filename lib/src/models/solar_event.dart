@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:lunar_date_time/src/models/check_date_mixin.dart';
 
 /// Lớp đại diện cho việc lặp lại sự kiện theo lịch dương.
 class SolarRepeat extends BaseRepeat<SolarDateTime> {
@@ -106,7 +107,8 @@ class SolarRepeat extends BaseRepeat<SolarDateTime> {
 }
 
 /// Lớp đại diện cho một sự kiện theo lịch dương.
-class SolarEvent extends BaseEvent<SolarDateTime> {
+class SolarEvent extends BaseEvent<SolarDateTime>
+    with CheckDateMixin<SolarDateTime> {
   /// Khởi tạo một đối tượng SolarEvent.
   SolarEvent({
     super.id = '',
@@ -181,120 +183,6 @@ class SolarEvent extends BaseEvent<SolarDateTime> {
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
       createdDate: createdDate ?? this.createdDate,
     );
-  }
-
-  /// Kiểm tra xem sự kiện này có phù hợp với ngày `date` không.
-  bool checkDate(SolarDateTime date) {
-    return switch (repeat.frequency) {
-      RepeatFrequency.no => _checkNo(date),
-      RepeatFrequency.daily => _checkDaily(date),
-      RepeatFrequency.weekly => _checkWeekly(date),
-      RepeatFrequency.monthly => _checkMonthly(date),
-      RepeatFrequency.yearly => _checkYearly(date),
-    };
-  }
-
-  /// Kiểm tra sự kiện không lặp lại.
-  bool _checkNo(SolarDateTime date) {
-    if (this.date.day == date.day &&
-        this.date.month == date.month &&
-        this.date.year == date.year) {
-      return true;
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng ngày.
-  bool _checkDaily(SolarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
-
-    final everyInMilliseconds = date.toDateTime().millisecondsSinceEpoch -
-        this.date.toDateTime().millisecondsSinceEpoch;
-    final every = Duration(milliseconds: everyInMilliseconds).inDays;
-    if (every % repeat.every == 0) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng tuần.
-  bool _checkWeekly(SolarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
-
-    final thisDT = this.date.toDateTime();
-    final dateDT = date.toDateTime();
-
-    if (thisDT.weekday == dateDT.weekday) {
-      final everyInMilliseconds =
-          dateDT.millisecondsSinceEpoch - thisDT.millisecondsSinceEpoch;
-      final every = Duration(milliseconds: everyInMilliseconds).inDays ~/ 7;
-      if (every % repeat.every == 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng tháng.
-  bool _checkMonthly(SolarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
-
-    if (isEndOfMonth) {
-      final tomorrow = date.toDateTime().add(Duration(days: 1)).toSolar();
-      if (tomorrow.day == 1) {
-        final every = date.month - this.date.month;
-        if (every % repeat.every == 0) {
-          return true;
-        }
-      }
-    } else if (this.date.day == date.day) {
-      final every = date.month - this.date.month;
-      if (every % repeat.every == 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra sự kiện lặp lại hàng năm.
-  bool _checkYearly(SolarDateTime date) {
-    if (!_isValidDateInRange(date)) return false;
-
-    if (this.date.month == date.month) {
-      if (isEndOfMonth) {
-        final tomorrow = date.toDateTime().add(Duration(days: 1)).toSolar();
-        if (tomorrow.day == 1) {
-          final every = date.year - this.date.year;
-          if (every % repeat.every == 0) {
-            return true;
-          }
-        }
-      } else if (this.date.day == date.day) {
-        final every = date.year - this.date.year;
-        if (every % repeat.every == 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /// Kiểm tra xem ngày có nằm trong phạm vi hợp lệ không.
-  bool _isValidDateInRange(SolarDateTime date) {
-    if (this.date.day == date.day &&
-        this.date.month == date.month &&
-        this.date.year == date.year) {
-      return true;
-    }
-    if (repeat.toDate.day == date.day &&
-        repeat.toDate.month == date.month &&
-        repeat.toDate.year == date.year) {
-      return true;
-    }
-    final dateDT = date.toDateTime();
-    return dateDT.isAfter(this.date.toDateTime()) &&
-        dateDT.isBefore(repeat.toDate.toDateTime());
   }
 
   /// Tạo một SolarEvent từ một Map.
