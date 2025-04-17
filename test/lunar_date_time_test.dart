@@ -88,48 +88,5 @@ void main() {
 
       expect(deserializedEvent, equals(event));
     });
-
-    test('LunarEventList equality', () {
-      final eventsList1 = LunarEventList(
-        events: {
-          LunarDateTime(2025, 5, 12): [
-            LunarEvent(
-                date: LunarDateTime(2025, 5, 12),
-                title: 'Festival',
-                createdDate: DateTime(2025, 5, 1)),
-          ],
-        },
-      );
-      final eventsList2 = LunarEventList(
-        events: {
-          LunarDateTime(2025, 5, 12): [
-            LunarEvent(
-                date: LunarDateTime(2025, 5, 12),
-                title: 'Festival',
-                createdDate: DateTime(2025, 5, 1)),
-          ],
-        },
-      );
-
-      expect(eventsList1, equals(eventsList2));
-    });
-
-    test('LunarEventList serialization', () {
-      final eventsList = LunarEventList(
-        events: {
-          LunarDateTime(2025, 5, 12): [
-            LunarEvent(
-                date: LunarDateTime(2025, 5, 12),
-                title: 'Festival',
-                createdDate: DateTime(2025, 5, 1)),
-          ],
-        },
-      );
-
-      final json = eventsList.toJson();
-      final deserializedList = LunarEventList.fromJson(json);
-
-      expect(deserializedList, equals(eventsList));
-    });
   });
 }

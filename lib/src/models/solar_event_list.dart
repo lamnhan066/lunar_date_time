@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
 /// Lớp đại diện cho danh sách các sự kiện dựa trên SolarDateTime
-class SolarEventList extends BaseEventList<SolarDateTime> with EquatableMixin {
+class SolarEventList extends BaseEventList<SolarDateTime> {
   /// Khởi tạo danh sách sự kiện với các sự kiện được truyền vào
   SolarEventList({required super.events});
 
@@ -95,8 +94,4 @@ class SolarEventList extends BaseEventList<SolarDateTime> with EquatableMixin {
   /// Trả về chuỗi mô tả của SolarEventList
   @override
   String toString() => 'LunarEventList(events: $events)';
-
-  /// Danh sách các thuộc tính để so sánh trong Equatable
-  @override
-  List<Object> get props => [events];
 }

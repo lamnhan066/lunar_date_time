@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
 /// Lớp LunarEventList quản lý danh sách các sự kiện theo lịch âm
-class LunarEventList extends BaseEventList<LunarDateTime> with EquatableMixin {
+class LunarEventList extends BaseEventList<LunarDateTime> {
   /// Khởi tạo LunarEventList với danh sách sự kiện
   LunarEventList({required super.events});
 
@@ -91,8 +90,4 @@ class LunarEventList extends BaseEventList<LunarDateTime> with EquatableMixin {
   /// Trả về chuỗi mô tả của LunarEventList
   @override
   String toString() => 'LunarEventList(events: $events)';
-
-  /// Danh sách các thuộc tính để so sánh trong Equatable
-  @override
-  List<Object> get props => [events];
 }
