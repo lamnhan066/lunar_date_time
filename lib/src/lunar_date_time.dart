@@ -30,7 +30,7 @@ class LunarDateTime extends BaseDateTime {
 
   /// Kiểm tra xem một tháng cụ thể trong năm có phải là tháng nhuận hay không.
   static bool checkLeapMonth(int year, int month) {
-    return LunarDateTime(year, month).isLeapMonth;
+    return LunarDateTime.fromDateTime(DateTime(year, month)).isLeapMonth;
   }
 
   /// Constructor nội bộ, được sử dụng để khởi tạo đối tượng LunarDateTime.
