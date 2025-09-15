@@ -1,7 +1,7 @@
 import 'package:lunar_date_time/lunar_date_time.dart';
 import 'package:lunar_date_time/src/base.dart';
 import 'package:lunar_date_time/src/can_chi.dart';
-import 'package:lunar_date_time/src/converter.dart';
+import 'package:lunar_date_time/src/converter.dart' as converter;
 import 'package:lunar_date_time/src/events/lunar_events.dart';
 import 'package:lunar_date_time/src/events/solar_events.dart';
 
@@ -28,11 +28,6 @@ class LunarDateTime extends BaseDateTime {
   /// Trả về danh sách các ngày lễ dương lịch dưới dạng một danh sách phẳng.
   static List<SolarEvent> get solarEventsAsList => _solarEventsAsList;
 
-  /// Kiểm tra xem một tháng cụ thể trong năm có phải là tháng nhuận hay không.
-  static bool checkLeapMonth(int year, int month) {
-    return LunarDateTime.fromDateTime(DateTime(year, month)).isLeapMonth;
-  }
-
   /// Constructor nội bộ, được sử dụng để khởi tạo đối tượng LunarDateTime.
   LunarDateTime._internal({
     required SolarDateTime solarDateTime,
@@ -58,7 +53,7 @@ class LunarDateTime extends BaseDateTime {
     int millisecond = 0,
     int microsecond = 0,
   ]) {
-    final solar = convertLunar2Solar(
+    final solar = converter.convertLunar2Solar(
       day,
       month,
       year,
@@ -101,7 +96,7 @@ class LunarDateTime extends BaseDateTime {
     int millisecond = 0,
     int microsecond = 0,
   ]) {
-    final solar = convertLunar2Solar(
+    final solar = converter.convertLunar2Solar(
       day,
       month,
       year,
@@ -136,7 +131,7 @@ class LunarDateTime extends BaseDateTime {
   /// Constructor khởi tạo từ đối tượng DateTime.
   factory LunarDateTime.fromDateTime(DateTime dateTime) {
     final solar = SolarDateTime.fromDateTime(dateTime);
-    final lunar = convertSolar2Lunar(
+    final lunar = converter.convertSolar2Lunar(
       solar.day,
       solar.month,
       solar.year,
