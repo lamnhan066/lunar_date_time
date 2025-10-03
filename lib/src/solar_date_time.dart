@@ -33,7 +33,22 @@ class SolarDateTime implements BaseDateTime {
   /// Hàm tạo từ một đối tượng DateTime
   /// Chuyển đổi DateTime sang múi giờ UTC+7
   factory SolarDateTime.fromDateTime(DateTime dateTime) {
-    final local = dateTime.toUtc().add(_fixedTimeZoneOffset);
+    // DateTime sử dụng dữ liệu timezone lịch sử, điều này làm lệch ngày
+    // đối với các mốc thời gian cũ (ví dụ năm 1969 tại Việt Nam từng là UTC+8).
+    // Lịch cần cố định ở múi giờ UTC+7 nên ta bỏ qua offset lịch sử và giữ
+    // nguyên giá trị ngày/giờ đã chọn.
+    final local = dateTime.isUtc
+        ? dateTime.add(_fixedTimeZoneOffset)
+        : DateTime(
+            dateTime.year,
+            dateTime.month,
+            dateTime.day,
+            dateTime.hour,
+            dateTime.minute,
+            dateTime.second,
+            dateTime.millisecond,
+            dateTime.microsecond,
+          );
     return SolarDateTime(
       local.year,
       local.month,
