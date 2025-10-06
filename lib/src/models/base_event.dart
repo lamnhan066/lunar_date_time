@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
+import 'event_reminder.dart';
+
 /// Lớp đại diện cho một sự kiện cơ bản.
 /// [D] là kiểu dữ liệu mở rộng từ `BaseDateTime`.
 abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
@@ -39,6 +41,9 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
   /// Ngày tạo sự kiện.
   final DateTime createdDate;
 
+  /// Các thời điểm nhắc nhở trước sự kiện.
+  final List<EventReminder> reminders;
+
   /// Hàm khởi tạo cho `BaseEvent`.
   BaseEvent({
     required this.date,
@@ -52,7 +57,8 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
     required this.containTime,
     required this.isEndOfMonth,
     required this.createdDate,
-  });
+    List<EventReminder>? reminders,
+  }) : reminders = reminders ?? const [];
 
   /// Hàm sao chép sự kiện với các thuộc tính mới.
   BaseEvent<D> copyWith({
@@ -67,6 +73,7 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
     bool? containTime,
     bool? isEndOfMonth,
     DateTime? createdDate,
+    List<EventReminder>? reminders,
   });
 
   /// Chuyển đổi sự kiện sang định dạng JSON.
@@ -91,6 +98,7 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
       containTime,
       isEndOfMonth,
       createdDate,
+      List<Object?>.from(reminders),
     ];
   }
 }

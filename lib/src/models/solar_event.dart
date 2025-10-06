@@ -122,9 +122,11 @@ class SolarEvent extends BaseEvent<SolarDateTime>
     super.containTime = false,
     super.isEndOfMonth = false,
     DateTime? createdDate,
+    List<EventReminder> reminders = const [],
   }) : super(
           repeat: repeat ?? SolarRepeat.no(),
           createdDate: createdDate ?? DateTime.now(),
+          reminders: reminders,
         );
 
   /// Tạo một SolarEvent từ một BaseEvent.
@@ -152,6 +154,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       containTime: event.containTime,
       isEndOfMonth: event.isEndOfMonth,
       createdDate: event.createdDate,
+      reminders: event.reminders,
     );
   }
 
@@ -169,6 +172,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
     bool? containTime,
     bool? isEndOfMonth,
     DateTime? createdDate,
+    List<EventReminder>? reminders,
   }) {
     return SolarEvent(
       date: date ?? this.date,
@@ -182,6 +186,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
       createdDate: createdDate ?? this.createdDate,
+      reminders: reminders ?? this.reminders,
     );
   }
 
@@ -207,6 +212,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       createdDate: map['createdDate'] is int
           ? DateTime.fromMillisecondsSinceEpoch(map['createdDate'])
           : DateTime.parse(map['createdDate']),
+      reminders: EventReminder.listFromDynamic(map['reminders']),
     );
   }
 
@@ -235,6 +241,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       'containTime': containTime,
       'isEndOfMonth': isEndOfMonth,
       'createdDate': createdDate.toIso8601String(),
+      'reminders': reminders.map((e) => e.toMap()).toList(growable: false),
     };
   }
 }

@@ -120,9 +120,11 @@ class LunarEvent extends BaseEvent<LunarDateTime>
     super.containTime = false,
     super.isEndOfMonth = false,
     DateTime? createdDate,
+    List<EventReminder> reminders = const [],
   }) : super(
           repeat: repeat ?? LunarRepeat.no(),
           createdDate: createdDate ?? DateTime.now(),
+          reminders: reminders,
         );
 
   /// Tạo một LunarEvent từ một BaseEvent.
@@ -152,6 +154,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       containTime: event.containTime,
       isEndOfMonth: event.isEndOfMonth,
       createdDate: event.createdDate,
+      reminders: event.reminders,
     );
   }
 
@@ -169,6 +172,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
     bool? containTime,
     bool? isEndOfMonth,
     DateTime? createdDate,
+    List<EventReminder>? reminders,
   }) {
     return LunarEvent(
       date: date ?? this.date,
@@ -182,6 +186,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       containTime: containTime ?? this.containTime,
       isEndOfMonth: isEndOfMonth ?? this.isEndOfMonth,
       createdDate: createdDate ?? this.createdDate,
+      reminders: reminders ?? this.reminders,
     );
   }
 
@@ -207,6 +212,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       createdDate: map['createdDate'] is int
           ? DateTime.fromMillisecondsSinceEpoch(map['createdDate'])
           : DateTime.parse(map['createdDate']),
+      reminders: EventReminder.listFromDynamic(map['reminders']),
     );
   }
 
@@ -235,6 +241,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       'containTime': containTime,
       'isEndOfMonth': isEndOfMonth,
       'createdDate': createdDate.toIso8601String(),
+      'reminders': reminders.map((e) => e.toMap()).toList(growable: false),
     };
   }
 }

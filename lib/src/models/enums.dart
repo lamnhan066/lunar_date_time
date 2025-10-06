@@ -10,3 +10,11 @@ enum RepeatFrequency {
   monthly,
   yearly,
 }
+
+enum ReminderUnit {
+  hours,
+  days,
+  weeks,
+  months,
+  years,
+}
