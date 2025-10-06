@@ -42,10 +42,16 @@ class EventReminder extends Equatable {
   }
 
   static List<EventReminder> listFromDynamic(dynamic data) {
-    if (data is List) {
+    if (data is Iterable) {
       return data
-          .whereType<Map<String, dynamic>>()
-          .map((e) => EventReminder.fromMap(e))
+          .map((e) {
+            if (e is EventReminder) return e;
+            if (e is Map) {
+              return EventReminder.fromMap(e.cast<String, dynamic>());
+            }
+            return null;
+          })
+          .whereType<EventReminder>()
           .toList(growable: false);
     }
 

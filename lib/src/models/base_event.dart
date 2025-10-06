@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
 
-import 'event_reminder.dart';
-
 /// Lớp đại diện cho một sự kiện cơ bản.
 /// [D] là kiểu dữ liệu mở rộng từ `BaseDateTime`.
 abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
