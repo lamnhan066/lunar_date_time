@@ -32,12 +32,13 @@ class EventReminder extends Equatable {
 
   factory EventReminder.fromMap(Map<String, dynamic>? map) {
     if (map == null) {
-      return const EventReminder(value: 0, unit: ReminderUnit.hours);
+      return const EventReminder(value: 0, unit: ReminderUnit.minutes);
     }
 
     return EventReminder(
       value: map['value']?.toInt() ?? 0,
-      unit: ReminderUnit.values.byName(map['unit'] ?? ReminderUnit.hours.name),
+      unit:
+          ReminderUnit.values.byName(map['unit'] ?? ReminderUnit.minutes.name),
     );
   }
 
