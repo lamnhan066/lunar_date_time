@@ -41,12 +41,22 @@ mixin CheckDateMixin<D extends BaseDateTime> on BaseEvent<D> {
     if (!_isValidDateInRange(dateToCheck)) return false;
 
     if (isEndOfMonth) {
-      final tomorrow =
-          dateToCheck.toDateTime().add(Duration(days: 1)).toSolar();
-      if (tomorrow.day == 1) {
-        final monthsDiff = (dateToCheck.month - date.month) +
-            12 * (dateToCheck.year - date.year);
-        return monthsDiff % repeat.every == 0;
+      if (dateToCheck is LunarDateTime) {
+        final tomorrow =
+            dateToCheck.toDateTime().add(Duration(days: 1)).toLunar();
+        if (tomorrow.day == 1) {
+          final monthsDiff = (dateToCheck.month - date.month) +
+              12 * (dateToCheck.year - date.year);
+          return monthsDiff % repeat.every == 0;
+        }
+      } else {
+        final tomorrow =
+            dateToCheck.toDateTime().add(Duration(days: 1)).toSolar();
+        if (tomorrow.day == 1) {
+          final monthsDiff = (dateToCheck.month - date.month) +
+              12 * (dateToCheck.year - date.year);
+          return monthsDiff % repeat.every == 0;
+        }
       }
     } else if (date.day == dateToCheck.day) {
       final monthsDiff = (dateToCheck.month - date.month) +
@@ -62,11 +72,20 @@ mixin CheckDateMixin<D extends BaseDateTime> on BaseEvent<D> {
 
     if (date.month == dateToCheck.month) {
       if (isEndOfMonth) {
-        final tomorrow =
-            dateToCheck.toDateTime().add(Duration(days: 1)).toSolar();
-        if (tomorrow.day == 1) {
-          final yearsDiff = dateToCheck.year - date.year;
-          return yearsDiff % repeat.every == 0;
+        if (dateToCheck is LunarDateTime) {
+          final tomorrow =
+              dateToCheck.toDateTime().add(Duration(days: 1)).toLunar();
+          if (tomorrow.day == 1) {
+            final yearsDiff = dateToCheck.year - date.year;
+            return yearsDiff % repeat.every == 0;
+          }
+        } else {
+          final tomorrow =
+              dateToCheck.toDateTime().add(Duration(days: 1)).toSolar();
+          if (tomorrow.day == 1) {
+            final yearsDiff = dateToCheck.year - date.year;
+            return yearsDiff % repeat.every == 0;
+          }
         }
       } else if (date.day == dateToCheck.day) {
         final yearsDiff = dateToCheck.year - date.year;
