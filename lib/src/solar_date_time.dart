@@ -86,16 +86,7 @@ class SolarDateTime implements BaseDateTime {
 
   @override
   DateTime toDateTime() {
-    return DateTime(
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      second,
-      millisecond,
-      microsecond,
-    );
+    return toUtc().toLocal();
   }
 
   /// Chuyển đổi ngược lại sang đối tượng DateTime UTC
