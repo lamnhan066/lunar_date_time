@@ -37,27 +37,26 @@ class SolarDateTime implements BaseDateTime {
     // đối với các mốc thời gian cũ (ví dụ năm 1969 tại Việt Nam từng là UTC+8).
     // Lịch cần cố định ở múi giờ UTC+7 nên ta bỏ qua offset lịch sử và giữ
     // nguyên giá trị ngày/giờ đã chọn.
-    final local = dateTime.isUtc
-        ? dateTime.add(_fixedTimeZoneOffset)
-        : DateTime(
-            dateTime.year,
-            dateTime.month,
-            dateTime.day,
-            dateTime.hour,
-            dateTime.minute,
-            dateTime.second,
-            dateTime.millisecond,
-            dateTime.microsecond,
-          );
+    //
+    // Để xử lý đúng các timezone khác nhau (ví dụ UTC-8), ta cần:
+    // 1. Lấy thời điểm thực tế (moment in time) bằng cách chuyển về UTC
+    // 2. Điều chỉnh từ UTC sang UTC+7 để lấy "wall clock time" tại UTC+7
+    // 3. Trích xuất các thành phần ngày/giờ từ thời điểm đã điều chỉnh
+    //
+    // Lưu ý: Nếu DateTime không phải UTC, ta cần chuyển nó về UTC trước
+    // để lấy đúng thời điểm, sau đó điều chỉnh sang UTC+7
+    final utcMoment = dateTime.isUtc ? dateTime : dateTime.toUtc();
+    // Điều chỉnh từ UTC sang UTC+7 để lấy wall clock time tại UTC+7
+    final utcPlus7 = utcMoment.add(_fixedTimeZoneOffset);
     return SolarDateTime(
-      local.year,
-      local.month,
-      local.day,
-      local.hour,
-      local.minute,
-      local.second,
-      local.millisecond,
-      local.microsecond,
+      utcPlus7.year,
+      utcPlus7.month,
+      utcPlus7.day,
+      utcPlus7.hour,
+      utcPlus7.minute,
+      utcPlus7.second,
+      utcPlus7.millisecond,
+      utcPlus7.microsecond,
     );
   }
 
