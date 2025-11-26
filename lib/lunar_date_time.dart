@@ -12,3 +12,4 @@ export 'src/models/lunar_event_list.dart';
 export 'src/models/solar_event.dart';
 export 'src/models/solar_event_list.dart';
 export 'src/solar_date_time.dart';
+export 'src/timezone_utils.dart';

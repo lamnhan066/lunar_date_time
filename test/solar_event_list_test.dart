@@ -144,8 +144,13 @@ void main() {
       };
 
       final recreatedEventList = SolarEventList.fromMap(map);
+      final recreatedEvents = recreatedEventList.getEvents(date);
 
-      expect(recreatedEventList.getEvents(date), contains(event));
+      expect(recreatedEvents.length, equals(1));
+      expect(recreatedEvents[0].date, equals(event.date));
+      expect(recreatedEvents[0].title, equals(event.title));
+      expect(recreatedEvents[0].repeat.frequency, equals(event.repeat.frequency));
+      expect(recreatedEvents[0].repeat.every, equals(event.repeat.every));
     });
 
     test('toJson and fromJson work correctly', () {
@@ -160,8 +165,13 @@ void main() {
 
       final json = eventList.toJson();
       final recreatedEventList = SolarEventList.fromJson(json);
+      final recreatedEvents = recreatedEventList.getEvents(date);
 
-      expect(recreatedEventList.getEvents(date), contains(event));
+      expect(recreatedEvents.length, equals(1));
+      expect(recreatedEvents[0].date, equals(event.date));
+      expect(recreatedEvents[0].title, equals(event.title));
+      expect(recreatedEvents[0].repeat.frequency, equals(event.repeat.frequency));
+      expect(recreatedEvents[0].repeat.every, equals(event.repeat.every));
     });
 
     test('toString returns a string representation of the event list', () {

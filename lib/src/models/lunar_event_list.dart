@@ -55,7 +55,7 @@ class LunarEventList extends BaseEventList<LunarDateTime> {
   }
 
   /// Chuyển đổi danh sách sự kiện sang dạng Map
-  /// Map<DateTime dưới dạng microsecondsSinceEpoch, Danh sách LunarEvent>
+  /// Map<TZDateTime dưới dạng ISO8601 string, Danh sách LunarEvent>
   @override
   Map<String, dynamic> toMap() {
     final Map<String, List<String>> map = {};
@@ -74,7 +74,7 @@ class LunarEventList extends BaseEventList<LunarDateTime> {
     final events = LunarEventList(events: {});
     final mapEvents = map['events'] as Map<String, dynamic>;
     mapEvents.forEach((key, value) {
-      var dateTime = LunarDateTime.fromDateTime(DateTime.parse(key));
+      var dateTime = LunarDateTime.fromDateTime(Utc7.parse(key));
       events.addAll(
         dateTime,
         (value as List).map((e) => LunarEvent.fromJson(e.toString())).toList(),

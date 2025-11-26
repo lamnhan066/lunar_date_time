@@ -55,7 +55,7 @@ class SolarEventList extends BaseEventList<SolarDateTime> {
   }
 
   /// Chuyển đổi danh sách sự kiện thành một Map
-  /// Map<SolarDateTime dưới dạng microsecondsSinceEpoch, Danh sách các sự kiện>
+  /// Map<SolarDateTime dưới dạng ISO8601 string, Danh sách các sự kiện>
   @override
   Map<String, dynamic> toMap() {
     final Map<String, List<String>> map = {};
@@ -74,7 +74,7 @@ class SolarEventList extends BaseEventList<SolarDateTime> {
     final events = SolarEventList(events: {});
     final mapEvents = map['events'] as Map<String, dynamic>;
     mapEvents.forEach((key, value) {
-      var solarDateTime = SolarDateTime.fromDateTime(DateTime.parse(key));
+      var solarDateTime = SolarDateTime.fromDateTime(Utc7.parse(key));
       events.addAll(
         solarDateTime,
         (value as List).map((e) => SolarEvent.fromJson(e.toString())).toList(),

@@ -1,8 +1,8 @@
 import 'package:lunar_date_time/src/models/base_date_time.dart';
-import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
+import 'package:lunar_date_time/src/timezone_utils.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-/// Lớp đại diện cho thời gian mặt trời (Solar DateTime)
+/// Lớp đại diện cho thời gian mặt trời (Solar TZDateTime)
 /// với múi giờ cố định là UTC+7 (Indochina Time)
 class SolarDateTime implements BaseDateTime {
   /// Đối tượng TZDateTime nội bộ đã được điều chỉnh theo UTC+7
@@ -18,7 +18,7 @@ class SolarDateTime implements BaseDateTime {
     int second = 0,
     int millisecond = 0,
     int microsecond = 0,
-  ]) : _dateTime = tz_utils.dateTime(
+  ]) : _dateTime = Utc7.dateTime(
           year,
           month,
           day,
@@ -29,11 +29,11 @@ class SolarDateTime implements BaseDateTime {
           microsecond,
         );
 
-  /// Hàm tạo từ một đối tượng TZDateTime hoặc DateTime
+  /// Hàm tạo từ một đối tượng TZDateTime
   /// Chuyển đổi sang múi giờ UTC+7
-  factory SolarDateTime.fromDateTime(dynamic dateTime) {
-    // Chuyển đổi DateTime hoặc TZDateTime sang TZDateTime trong UTC+7
-    final utc7DateTime = tz_utils.toUtc7(dateTime);
+  factory SolarDateTime.fromDateTime(tz.TZDateTime dateTime) {
+    // Chuyển đổi TZDateTime sang TZDateTime trong UTC+7
+    final utc7DateTime = Utc7.toUtc7(dateTime);
     return SolarDateTime(
       utc7DateTime.year,
       utc7DateTime.month,

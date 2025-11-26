@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _lunarDateTime = LunarDateTime.fromDateTime(DateTime.now());
+  final _lunarDateTime = LunarDateTime.fromDateTime(Utc7.now());
 
   @override
   void initState() {

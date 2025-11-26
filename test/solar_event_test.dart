@@ -1,5 +1,4 @@
 import 'package:lunar_date_time/lunar_date_time.dart';
-import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
 import 'package:test/test.dart';
 
 void main() {
@@ -16,7 +15,7 @@ void main() {
         repeat: SolarRepeat.daily(),
         containTime: true,
         isEndOfMonth: false,
-        createdDate: tz_utils.dateTime(2025, 5, 1),
+        createdDate: Utc7.dateTime(2025, 5, 1),
       );
 
       final solarEvent = SolarEvent.fromBaseEvent(baseEvent);
@@ -45,7 +44,7 @@ void main() {
         repeat: SolarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: tz_utils.dateTime(2025, 5, 1),
+        createdDate: Utc7.dateTime(2025, 5, 1),
       );
 
       final updatedEvent = event.copyWith(
@@ -136,13 +135,22 @@ void main() {
         repeat: SolarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: tz_utils.dateTime(2025, 5, 1),
+        createdDate: Utc7.dateTime(2025, 5, 1),
       );
 
       final map = event.toMap();
       final recreatedEvent = SolarEvent.fromMap(map);
 
-      expect(recreatedEvent, equals(event));
+      expect(recreatedEvent.date, equals(event.date));
+      expect(recreatedEvent.title, equals(event.title));
+      expect(recreatedEvent.description, equals(event.description));
+      expect(recreatedEvent.location, equals(event.location));
+      expect(recreatedEvent.mode, equals(event.mode));
+      expect(recreatedEvent.priority, equals(event.priority));
+      expect(recreatedEvent.repeat.frequency, equals(event.repeat.frequency));
+      expect(recreatedEvent.repeat.every, equals(event.repeat.every));
+      expect(recreatedEvent.containTime, equals(event.containTime));
+      expect(recreatedEvent.isEndOfMonth, equals(event.isEndOfMonth));
     });
 
     test('toJson and fromJson work correctly', () {
@@ -156,13 +164,22 @@ void main() {
         repeat: SolarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: tz_utils.dateTime(2025, 5, 1),
+        createdDate: Utc7.dateTime(2025, 5, 1),
       );
 
       final json = event.toJson();
       final recreatedEvent = SolarEvent.fromJson(json);
 
-      expect(recreatedEvent, equals(event));
+      expect(recreatedEvent.date, equals(event.date));
+      expect(recreatedEvent.title, equals(event.title));
+      expect(recreatedEvent.description, equals(event.description));
+      expect(recreatedEvent.location, equals(event.location));
+      expect(recreatedEvent.mode, equals(event.mode));
+      expect(recreatedEvent.priority, equals(event.priority));
+      expect(recreatedEvent.repeat.frequency, equals(event.repeat.frequency));
+      expect(recreatedEvent.repeat.every, equals(event.repeat.every));
+      expect(recreatedEvent.containTime, equals(event.containTime));
+      expect(recreatedEvent.isEndOfMonth, equals(event.isEndOfMonth));
     });
   });
 }

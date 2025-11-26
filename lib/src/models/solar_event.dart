@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:lunar_date_time/lunar_date_time.dart';
 import 'package:lunar_date_time/src/models/check_date_mixin.dart';
-import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
 import 'package:timezone/timezone.dart' as tz;
 
 /// Lớp đại diện cho việc lặp lại sự kiện theo lịch dương.
@@ -69,11 +68,11 @@ class SolarRepeat extends BaseRepeat<SolarDateTime> {
   /// Tạo một SolarRepeat từ một Map.
   factory SolarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = map['fromDate'] is int
-        ? tz_utils.toUtc7(DateTime.fromMillisecondsSinceEpoch(map['fromDate']))
-        : tz_utils.parse(map['fromDate']);
+        ? Utc7.fromMillisecondsSinceEpoch(map['fromDate'])
+        : Utc7.parse(map['fromDate']);
     final toDate = map['toDate'] is int
-        ? tz_utils.toUtc7(DateTime.fromMillisecondsSinceEpoch(map['toDate']))
-        : tz_utils.parse(map['toDate']);
+        ? Utc7.fromMillisecondsSinceEpoch(map['toDate'])
+        : Utc7.parse(map['toDate']);
     return SolarRepeat(
       fromDate: fromDate.toSolar(),
       toDate: toDate.toSolar(),
@@ -127,7 +126,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
     List<EventReminder> reminders = const [],
   }) : super(
           repeat: repeat ?? SolarRepeat.no(),
-          createdDate: createdDate ?? tz_utils.now(),
+          createdDate: createdDate ?? Utc7.now(),
           reminders: reminders,
         );
 
@@ -196,9 +195,8 @@ class SolarEvent extends BaseEvent<SolarDateTime>
   factory SolarEvent.fromMap(Map map) {
     return SolarEvent(
       date: (map['date'] is int
-              ? tz_utils
-                  .toUtc7(DateTime.fromMillisecondsSinceEpoch(map['date']))
-              : tz_utils.parse(map['date']))
+              ? Utc7.fromMillisecondsSinceEpoch(map['date'])
+              : Utc7.parse(map['date']))
           .toSolar(),
       title: map['title'],
       description: map['description'] ?? '',
@@ -213,9 +211,8 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
       createdDate: map['createdDate'] is int
-          ? tz_utils
-              .toUtc7(DateTime.fromMillisecondsSinceEpoch(map['createdDate']))
-          : tz_utils.parse(map['createdDate']),
+          ? Utc7.fromMillisecondsSinceEpoch(map['createdDate'])
+          : Utc7.parse(map['createdDate']),
       reminders: EventReminder.listFromDynamic(map['reminders']),
     );
   }
