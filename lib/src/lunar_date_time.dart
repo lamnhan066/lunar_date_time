@@ -4,6 +4,8 @@ import 'package:lunar_date_time/src/can_chi.dart';
 import 'package:lunar_date_time/src/converter.dart' as converter;
 import 'package:lunar_date_time/src/events/lunar_events.dart';
 import 'package:lunar_date_time/src/events/solar_events.dart';
+import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
+import 'package:timezone/timezone.dart' as tz;
 
 class LunarDateTime extends BaseDateTime {
   /// Danh sách các ngày lễ âm lịch, được lưu trữ để tránh tính toán lại.
@@ -62,7 +64,7 @@ class LunarDateTime extends BaseDateTime {
     );
     return LunarDateTime._internal(
       solarDateTime: SolarDateTime.fromDateTime(
-        DateTime(
+        tz_utils.dateTime(
           solar.year,
           solar.month,
           solar.day,
@@ -105,7 +107,7 @@ class LunarDateTime extends BaseDateTime {
     );
     return LunarDateTime._internal(
       solarDateTime: SolarDateTime.fromDateTime(
-        DateTime(
+        tz_utils.dateTime(
           solar.year,
           solar.month,
           solar.day,
@@ -128,9 +130,12 @@ class LunarDateTime extends BaseDateTime {
     );
   }
 
-  /// Constructor khởi tạo từ đối tượng DateTime.
-  factory LunarDateTime.fromDateTime(DateTime dateTime) {
-    final solar = SolarDateTime.fromDateTime(dateTime);
+  /// Constructor khởi tạo từ đối tượng TZDateTime hoặc DateTime.
+  /// Converts to UTC+7 timezone before processing.
+  factory LunarDateTime.fromDateTime(dynamic dateTime) {
+    // Ensure the DateTime/TZDateTime is in UTC+7 timezone
+    final utc7DateTime = tz_utils.toUtc7(dateTime);
+    final solar = SolarDateTime.fromDateTime(utc7DateTime);
     final lunar = converter.convertSolar2Lunar(
       solar.day,
       solar.month,
@@ -243,12 +248,12 @@ class LunarDateTime extends BaseDateTime {
   }
 
   @override
-  DateTime toDateTime() {
+  tz.TZDateTime toDateTime() {
     return _solarDateTime.toDateTime();
   }
 
   @override
-  DateTime toUtc() {
+  tz.TZDateTime toUtc() {
     return _solarDateTime.toUtc();
   }
 

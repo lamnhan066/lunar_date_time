@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 /// Lớp đại diện cho một sự kiện cơ bản.
 /// [D] là kiểu dữ liệu mở rộng từ `BaseDateTime`.
@@ -37,7 +38,7 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
   final bool isEndOfMonth;
 
   /// Ngày tạo sự kiện.
-  final DateTime createdDate;
+  final tz.TZDateTime createdDate;
 
   /// Các thời điểm nhắc nhở trước sự kiện.
   final List<EventReminder> reminders;
@@ -70,7 +71,7 @@ abstract class BaseEvent<D extends BaseDateTime> extends Equatable {
     EventMode? mode,
     bool? containTime,
     bool? isEndOfMonth,
-    DateTime? createdDate,
+    tz.TZDateTime? createdDate,
     List<EventReminder>? reminders,
   });
 

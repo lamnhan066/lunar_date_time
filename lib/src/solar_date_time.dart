@@ -1,13 +1,12 @@
 import 'package:lunar_date_time/src/models/base_date_time.dart';
+import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
+import 'package:timezone/timezone.dart' as tz;
 
 /// Lớp đại diện cho thời gian mặt trời (Solar DateTime)
 /// với múi giờ cố định là UTC+7 (Indochina Time)
 class SolarDateTime implements BaseDateTime {
-  /// Đối tượng DateTime nội bộ đã được điều chỉnh theo UTC+7
-  final DateTime _dateTime;
-
-  /// Độ lệch múi giờ Indochina Time (UTC+7)
-  static const Duration _fixedTimeZoneOffset = Duration(hours: 7);
+  /// Đối tượng TZDateTime nội bộ đã được điều chỉnh theo UTC+7
+  final tz.TZDateTime _dateTime;
 
   /// Hàm khởi tạo SolarDateTime với các tham số thời gian
   SolarDateTime(
@@ -19,7 +18,7 @@ class SolarDateTime implements BaseDateTime {
     int second = 0,
     int millisecond = 0,
     int microsecond = 0,
-  ]) : _dateTime = DateTime(
+  ]) : _dateTime = tz_utils.dateTime(
           year,
           month,
           day,
@@ -30,33 +29,20 @@ class SolarDateTime implements BaseDateTime {
           microsecond,
         );
 
-  /// Hàm tạo từ một đối tượng DateTime
-  /// Chuyển đổi DateTime sang múi giờ UTC+7
-  factory SolarDateTime.fromDateTime(DateTime dateTime) {
-    // DateTime sử dụng dữ liệu timezone lịch sử, điều này làm lệch ngày
-    // đối với các mốc thời gian cũ (ví dụ năm 1969 tại Việt Nam từng là UTC+8).
-    // Lịch cần cố định ở múi giờ UTC+7 nên ta bỏ qua offset lịch sử và giữ
-    // nguyên giá trị ngày/giờ đã chọn.
-    //
-    // Để xử lý đúng các timezone khác nhau (ví dụ UTC-8), ta cần:
-    // 1. Lấy thời điểm thực tế (moment in time) bằng cách chuyển về UTC
-    // 2. Điều chỉnh từ UTC sang UTC+7 để lấy "wall clock time" tại UTC+7
-    // 3. Trích xuất các thành phần ngày/giờ từ thời điểm đã điều chỉnh
-    //
-    // Lưu ý: Nếu DateTime không phải UTC, ta cần chuyển nó về UTC trước
-    // để lấy đúng thời điểm, sau đó điều chỉnh sang UTC+7
-    final utcMoment = dateTime.isUtc ? dateTime : dateTime.toUtc();
-    // Điều chỉnh từ UTC sang UTC+7 để lấy wall clock time tại UTC+7
-    final utcPlus7 = utcMoment.add(_fixedTimeZoneOffset);
+  /// Hàm tạo từ một đối tượng TZDateTime hoặc DateTime
+  /// Chuyển đổi sang múi giờ UTC+7
+  factory SolarDateTime.fromDateTime(dynamic dateTime) {
+    // Chuyển đổi DateTime hoặc TZDateTime sang TZDateTime trong UTC+7
+    final utc7DateTime = tz_utils.toUtc7(dateTime);
     return SolarDateTime(
-      utcPlus7.year,
-      utcPlus7.month,
-      utcPlus7.day,
-      utcPlus7.hour,
-      utcPlus7.minute,
-      utcPlus7.second,
-      utcPlus7.millisecond,
-      utcPlus7.microsecond,
+      utc7DateTime.year,
+      utc7DateTime.month,
+      utc7DateTime.day,
+      utc7DateTime.hour,
+      utc7DateTime.minute,
+      utc7DateTime.second,
+      utc7DateTime.millisecond,
+      utc7DateTime.microsecond,
     );
   }
 
@@ -85,24 +71,14 @@ class SolarDateTime implements BaseDateTime {
   }
 
   @override
-  DateTime toDateTime() {
-    return toUtc().toLocal();
+  tz.TZDateTime toDateTime() {
+    return _dateTime;
   }
 
-  /// Chuyển đổi ngược lại sang đối tượng DateTime UTC
+  /// Chuyển đổi ngược lại sang đối tượng TZDateTime UTC
   @override
-  DateTime toUtc() {
-    final utc = _dateTime.subtract(_fixedTimeZoneOffset);
-    return DateTime.utc(
-      utc.year,
-      utc.month,
-      utc.day,
-      utc.hour,
-      utc.minute,
-      utc.second,
-      utc.millisecond,
-      utc.microsecond,
-    );
+  tz.TZDateTime toUtc() {
+    return _dateTime.toUtc();
   }
 
   /// Lấy năm

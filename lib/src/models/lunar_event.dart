@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:lunar_date_time/lunar_date_time.dart';
 import 'package:lunar_date_time/src/models/check_date_mixin.dart';
+import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
+import 'package:timezone/timezone.dart' as tz;
 
 /// Lớp đại diện cho việc lặp lại sự kiện theo lịch âm.
 class LunarRepeat extends BaseRepeat<LunarDateTime> {
@@ -67,13 +69,13 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   /// Tạo một LunarRepeat từ một Map.
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = map['fromDate'] is int
-        ? LunarDateTime.fromDateTime(
-            DateTime.fromMillisecondsSinceEpoch(map['fromDate']))
-        : LunarDateTime.fromDateTime(DateTime.parse(map['fromDate']));
+        ? LunarDateTime.fromDateTime(tz_utils
+            .toUtc7(DateTime.fromMillisecondsSinceEpoch(map['fromDate'])))
+        : LunarDateTime.fromDateTime(tz_utils.parse(map['fromDate']));
     final toDate = map['toDate'] is int
         ? LunarDateTime.fromDateTime(
-            DateTime.fromMillisecondsSinceEpoch(map['toDate']))
-        : LunarDateTime.fromDateTime(DateTime.parse(map['toDate']));
+            tz_utils.toUtc7(DateTime.fromMillisecondsSinceEpoch(map['toDate'])))
+        : LunarDateTime.fromDateTime(tz_utils.parse(map['toDate']));
     return LunarRepeat(
       fromDate: fromDate,
       toDate: toDate,
@@ -119,11 +121,11 @@ class LunarEvent extends BaseEvent<LunarDateTime>
     LunarRepeat? repeat,
     super.containTime = false,
     super.isEndOfMonth = false,
-    DateTime? createdDate,
+    tz.TZDateTime? createdDate,
     List<EventReminder> reminders = const [],
   }) : super(
           repeat: repeat ?? LunarRepeat.no(),
-          createdDate: createdDate ?? DateTime.now(),
+          createdDate: createdDate ?? tz_utils.now(),
           reminders: reminders,
         );
 
@@ -171,7 +173,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
     BaseRepeat<LunarDateTime>? repeat,
     bool? containTime,
     bool? isEndOfMonth,
-    DateTime? createdDate,
+    tz.TZDateTime? createdDate,
     List<EventReminder>? reminders,
   }) {
     return LunarEvent(
@@ -195,8 +197,8 @@ class LunarEvent extends BaseEvent<LunarDateTime>
     return LunarEvent(
       date: map['date'] is int
           ? LunarDateTime.fromDateTime(
-              DateTime.fromMillisecondsSinceEpoch(map['date']))
-          : LunarDateTime.fromDateTime(DateTime.parse(map['date'])),
+              tz_utils.toUtc7(DateTime.fromMillisecondsSinceEpoch(map['date'])))
+          : LunarDateTime.fromDateTime(tz_utils.parse(map['date'])),
       title: map['title'],
       description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),
@@ -210,8 +212,9 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       containTime: map['containTime'],
       isEndOfMonth: map['isEndOfMonth'],
       createdDate: map['createdDate'] is int
-          ? DateTime.fromMillisecondsSinceEpoch(map['createdDate'])
-          : DateTime.parse(map['createdDate']),
+          ? tz_utils
+              .toUtc7(DateTime.fromMillisecondsSinceEpoch(map['createdDate']))
+          : tz_utils.parse(map['createdDate']),
       reminders: EventReminder.listFromDynamic(map['reminders']),
     );
   }

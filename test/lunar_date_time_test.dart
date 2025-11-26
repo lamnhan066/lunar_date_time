@@ -1,4 +1,5 @@
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
 import 'package:test/test.dart';
 
 void main() {
@@ -50,12 +51,12 @@ void main() {
       final event1 = LunarEvent(
         date: LunarDateTime(2025, 5, 12),
         title: 'Festival',
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
       final event2 = LunarEvent(
         date: LunarDateTime(2025, 5, 12),
         title: 'Festival',
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       expect(event1, equals(event2));
@@ -65,12 +66,12 @@ void main() {
       final event1 = SolarEvent(
         date: SolarDateTime(2025, 5, 12),
         title: 'Solar Festival',
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
       final event2 = SolarEvent(
         date: SolarDateTime(2025, 5, 12),
         title: 'Solar Festival',
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       expect(event1, equals(event2));
@@ -80,7 +81,7 @@ void main() {
       final event = LunarEvent(
         date: LunarDateTime(2025, 5, 12),
         title: 'Festival',
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       final json = event.toJson();

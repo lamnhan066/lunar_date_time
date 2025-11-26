@@ -1,3 +1,5 @@
+import 'package:timezone/timezone.dart' as tz;
+
 /// Lớp trừu tượng BaseDateTime đại diện cho một đối tượng thời gian cơ bản.
 abstract class BaseDateTime {
   BaseDateTime();
@@ -29,11 +31,11 @@ abstract class BaseDateTime {
   /// Lấy ngày trong tuần (1: Thứ hai, 7: Chủ nhật).
   int get weekday;
 
-  /// Chuyển đổi đối tượng BaseDateTime thành đối tượng DateTime.
-  DateTime toDateTime();
+  /// Chuyển đổi đối tượng BaseDateTime thành đối tượng TZDateTime.
+  tz.TZDateTime toDateTime();
 
-  /// Chuyển đổi đối tượng BaseDateTime thành đối tượng DateTime UTC.
-  DateTime toUtc();
+  /// Chuyển đổi đối tượng BaseDateTime thành đối tượng TZDateTime UTC.
+  tz.TZDateTime toUtc();
 
   BaseDateTime copyWith({
     int? year,

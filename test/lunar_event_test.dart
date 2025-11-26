@@ -1,4 +1,5 @@
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:lunar_date_time/src/timezone_utils.dart' as tz_utils;
 import 'package:test/test.dart';
 
 void main() {
@@ -15,7 +16,7 @@ void main() {
         repeat: LunarRepeat.daily(),
         containTime: true,
         isEndOfMonth: false,
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       final lunarEvent = LunarEvent.fromBaseEvent(baseEvent);
@@ -44,7 +45,7 @@ void main() {
         repeat: LunarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       final updatedEvent = event.copyWith(
@@ -135,7 +136,7 @@ void main() {
         repeat: LunarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       final map = event.toMap();
@@ -155,7 +156,7 @@ void main() {
         repeat: LunarRepeat.daily(),
         containTime: false,
         isEndOfMonth: false,
-        createdDate: DateTime(2025, 5, 1),
+        createdDate: tz_utils.dateTime(2025, 5, 1),
       );
 
       final json = event.toJson();

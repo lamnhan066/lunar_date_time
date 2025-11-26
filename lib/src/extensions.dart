@@ -1,6 +1,17 @@
 import 'package:lunar_date_time/lunar_date_time.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 extension DateTimeEx on DateTime {
+  SolarDateTime toSolar() {
+    return SolarDateTime.fromDateTime(this);
+  }
+
+  LunarDateTime toLunar() {
+    return LunarDateTime.fromDateTime(this);
+  }
+}
+
+extension TZDateTimeEx on tz.TZDateTime {
   SolarDateTime toSolar() {
     return SolarDateTime.fromDateTime(this);
   }
