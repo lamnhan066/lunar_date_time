@@ -68,6 +68,14 @@ class Utc7 {
     return tz.TZDateTime.from(parsed, _utc7Location);
   }
 
+  static tz.TZDateTime? tryParse(String formattedString) {
+    try {
+      return parse(formattedString);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Converts any [DateTime] (local, UTC, or TZDateTime) to a [tz.TZDateTime]
   /// in the UTC+7 timezone (Asia/Ho_Chi_Minh).
   ///
