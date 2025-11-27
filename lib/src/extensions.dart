@@ -15,10 +15,18 @@ extension LunarEx on LunarDateTime {
   SolarDateTime toSolar() {
     return SolarDateTime.fromDateTime(toDateTime());
   }
+
+  LunarDateTime dateOnly() {
+    return LunarDateTime(year, month, day);
+  }
 }
 
 extension SolarEx on SolarDateTime {
   LunarDateTime toLunar() {
     return LunarDateTime.fromDateTime(toDateTime());
+  }
+
+  SolarDateTime dateOnly() {
+    return SolarDateTime(year, month, day);
   }
 }

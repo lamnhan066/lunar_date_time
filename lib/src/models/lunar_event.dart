@@ -38,8 +38,8 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   /// Tạo một LunarRepeat lặp lại với tần suất cụ thể.
   factory LunarRepeat.every(RepeatFrequency frequency) {
     return LunarRepeat(
-      fromDate: LunarDateTime(1900),
-      toDate: LunarDateTime(3000),
+      fromDate: LunarDateTime(1900).dateOnly(),
+      toDate: LunarDateTime(3000).dateOnly(),
       frequency: frequency,
       every: 1,
     );
@@ -68,16 +68,14 @@ class LunarRepeat extends BaseRepeat<LunarDateTime> {
   /// Tạo một LunarRepeat từ một Map.
   factory LunarRepeat.fromMap(Map<String, dynamic> map) {
     final fromDate = map['fromDate'] is int
-        ? LunarDateTime.fromDateTime(
-            Utc7.fromMillisecondsSinceEpoch(map['fromDate']))
-        : LunarDateTime.fromDateTime(Utc7.parse(map['fromDate']));
+        ? Utc7.fromMillisecondsSinceEpoch(map['fromDate'])
+        : Utc7.parse(map['fromDate']);
     final toDate = map['toDate'] is int
-        ? LunarDateTime.fromDateTime(
-            Utc7.fromMillisecondsSinceEpoch(map['toDate']))
-        : LunarDateTime.fromDateTime(Utc7.parse(map['toDate']));
+        ? Utc7.fromMillisecondsSinceEpoch(map['toDate'])
+        : Utc7.parse(map['toDate']);
     return LunarRepeat(
-      fromDate: fromDate,
-      toDate: toDate,
+      fromDate: fromDate.toLunar().dateOnly(),
+      toDate: toDate.toLunar().dateOnly(),
       frequency: RepeatFrequency.values.byName(map['frequency']),
       every: map['every']?.toInt() ?? 0,
     );
@@ -136,7 +134,7 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       id: event.id,
       date: event.date is LunarDateTime
           ? event.date as LunarDateTime
-          : event.date.toUtc().toLunar(),
+          : event.date.toDateTime().toLunar(),
       title: event.title,
       description: event.description,
       location: event.location,
@@ -145,10 +143,10 @@ class LunarEvent extends BaseEvent<LunarDateTime>
       repeat: LunarRepeat(
         fromDate: event.repeat.fromDate is LunarDateTime
             ? event.repeat.fromDate as LunarDateTime
-            : event.repeat.fromDate.toUtc().toLunar(),
+            : event.repeat.fromDate.toDateTime().toLunar(),
         toDate: event.repeat.toDate is LunarDateTime
             ? event.repeat.toDate as LunarDateTime
-            : event.repeat.toDate.toUtc().toLunar(),
+            : event.repeat.toDate.toDateTime().toLunar(),
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
@@ -195,9 +193,8 @@ class LunarEvent extends BaseEvent<LunarDateTime>
   factory LunarEvent.fromMap(Map map) {
     return LunarEvent(
       date: map['date'] is int
-          ? LunarDateTime.fromDateTime(
-              Utc7.fromMillisecondsSinceEpoch(map['date']))
-          : LunarDateTime.fromDateTime(Utc7.parse(map['date'])),
+          ? Utc7.fromMillisecondsSinceEpoch(map['date']).toLunar()
+          : Utc7.parse(map['date']).toLunar(),
       title: map['title'],
       description: map['description'] ?? '',
       mode: EventMode.values.byName(map['mode']),

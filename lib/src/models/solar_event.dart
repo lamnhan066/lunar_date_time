@@ -38,8 +38,8 @@ class SolarRepeat extends BaseRepeat<SolarDateTime> {
   /// Tạo một SolarRepeat với tần suất lặp lại cụ thể.
   factory SolarRepeat.every(RepeatFrequency frequency) {
     return SolarRepeat(
-      fromDate: SolarDateTime(1900),
-      toDate: SolarDateTime(3000),
+      fromDate: SolarDateTime(1900).dateOnly(),
+      toDate: SolarDateTime(3000).dateOnly(),
       frequency: frequency,
       every: 1,
     );
@@ -74,8 +74,8 @@ class SolarRepeat extends BaseRepeat<SolarDateTime> {
         ? Utc7.fromMillisecondsSinceEpoch(map['toDate'])
         : Utc7.parse(map['toDate']);
     return SolarRepeat(
-      fromDate: fromDate.toSolar(),
-      toDate: toDate.toSolar(),
+      fromDate: Utc7.dateOnly(fromDate).toSolar(),
+      toDate: Utc7.dateOnly(toDate).toSolar(),
       frequency: RepeatFrequency.values.byName(map['frequency']),
       every: map['every']?.toInt() ?? 0,
     );
@@ -136,7 +136,7 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       id: event.id,
       date: event.date is SolarDateTime
           ? event.date as SolarDateTime
-          : event.date.toUtc().toSolar(),
+          : event.date.toDateTime().toSolar(),
       title: event.title,
       description: event.description,
       location: event.location,
@@ -145,10 +145,10 @@ class SolarEvent extends BaseEvent<SolarDateTime>
       repeat: SolarRepeat(
         fromDate: event.repeat.fromDate is SolarDateTime
             ? event.repeat.fromDate as SolarDateTime
-            : event.repeat.fromDate.toUtc().toSolar(),
+            : event.repeat.fromDate.toDateTime().toSolar(),
         toDate: event.repeat.toDate is SolarDateTime
             ? event.repeat.toDate as SolarDateTime
-            : event.repeat.toDate.toUtc().toSolar(),
+            : event.repeat.toDate.toDateTime().toSolar(),
         frequency: event.repeat.frequency,
         every: event.repeat.every,
       ),
